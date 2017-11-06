@@ -29,7 +29,9 @@ script:
     elif [[ "${CHECK}" == "format" ]] && [[ "${TRAVIS_PULL_REQUEST_BRANCH}" != "" ]];
     then echo ${TRAVIS_PULL_REQUEST_BRANCH}; git diff -U0 ${TRAVIS_PULL_REQUEST_BRANCH} | pycodestyle --diff;
     elif [[ "${CHECK}" == "format" ]];
-    then git remote -vv; git branch -vv; git remote add diracGithub https://github.com/DIRACGrid/DIRAC.git; git diff -U0 diracGithub/integration | pycodestyle --diff;
+    then git remote -vv; git branch -vv; git remote add diracGithub
+    https://github.com/DIRACGrid/DIRAC.git; git remote -vv; git fetch
+    diracGithub; git diff -U0 diracGithub/integration | pycodestyle --diff;
     fi
 
 ## ignore errors for sourcefiles "-i"
