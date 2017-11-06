@@ -782,7 +782,7 @@ class Dirac( API ):
 
     shutil.copy( jobXMLFile, '%s/%s' % ( os.getcwd(), os.path.basename( jobXMLFile ) ) )
 
-    res = self.__getJDLParameters( job )
+    res = self.__getJDLParameters(job )
     if not res['OK']:
       self.log.error( "Could not extract job parameters from job")
       return res
