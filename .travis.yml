@@ -27,6 +27,8 @@ script:
     then travis_wait 30 .travis.d/runPylint.sh;
     elif [[ "${CHECK}" == "format" ]] && [[ "${TRAVIS_PULL_REQUEST_BRANCH}" != "" ]];
     then echo ${TRAVIS_PULL_REQUEST_BRANCH}; git diff -U0 ${TRAVIS_PULL_REQUEST_BRANCH} | pycodestyle --diff;
+    elif [[ "${CHECK}" == "format" ]];
+    then git diff -U0 integration | pycodestyle --diff;
     fi
 
 ## ignore errors for sourcefiles "-i"
