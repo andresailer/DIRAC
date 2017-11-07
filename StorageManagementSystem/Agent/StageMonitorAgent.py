@@ -73,7 +73,7 @@ class StageMonitorAgent( AgentModule ):
     oAccounting = DataOperation()
     oAccounting.setStartTime()
 
-    res = StorageElement( storageElement ).getFileMetadata( lfnRepIDs )
+    res = StorageElement(storageElement, plugins="GFAL2_SRM2").getFileMetadata(lfnRepIDs)
     if not res['OK']:
       gLogger.error( "StageMonitor.__monitorStorageElementStageRequests: Completely failed to monitor stage requests for replicas.", res['Message'] )
       return
