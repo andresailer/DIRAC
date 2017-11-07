@@ -370,7 +370,7 @@ class PilotParams( object ):
     self.userDN = ""
     self.maxCycles = self.MAX_CYCLES
     self.flavour = 'DIRAC'
-    self.gridVersion = ''
+    self.gridVersion = 'v13r0'
     self.pilotReference = ''
     self.releaseVersion = ''
     self.releaseProject = ''
