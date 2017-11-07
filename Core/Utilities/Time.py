@@ -186,6 +186,10 @@ def fromString( myDate = None ):
     if myDate.find( ' ' ) > 0:
       dateTimeTuple = myDate.split( ' ' )
       dateTuple = dateTimeTuple[0].split( '-' )
+      if len(dateTuple) != 3:
+        return datetime.datetime( year = 2099,
+                                  month = 1,
+                                  day = 1 )
       try:
         return ( datetime.datetime( year = dateTuple[0],
                                     month = dateTuple[1],
