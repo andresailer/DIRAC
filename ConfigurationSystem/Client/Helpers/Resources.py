@@ -238,6 +238,12 @@ def getQueues( siteList = None, ceList = None, ceTypeList = None, community = No
           continue
         queues = result['Value']
         for queue in queues:
+
+          disabled = gConfig.getValue('/Resources/Sites/%s/%s/CEs/%s/Queues/%s/Disabled' %
+                                      (grid, site, ce, queue), False)
+          if disabled:
+            continue
+
           if community:
             comList = gConfig.getValue( '/Resources/Sites/%s/%s/CEs/%s/Queues/%s/VO' % ( grid, site, ce, queue ), [] )
             if comList and not community in comList:
