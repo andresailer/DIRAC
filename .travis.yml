@@ -9,6 +9,10 @@ env:
     - CHECK=pylint
     - CHECK=format
 
+matrix:
+  allow_failures:
+    - CHECK=format
+
 
 # command to install dependencies
 install: 
@@ -27,6 +31,8 @@ script:
     then travis_wait 30 .travis.d/runPylint.sh;
     elif [[ "${CHECK}" == "format" ]] && [[ "${TRAVIS_PULL_REQUEST}" != "false" ]];
     then git remote add GH https://github.com/DIRACGrid/DIRAC.git; git fetch --no-tags GH ${TRAVIS_BRANCH}; git branch -vv; git diff -U0 GH/${TRAVIS_BRANCH} | pycodestyle --diff;
+    elif [[ "${CHECK}" == "format" ]];
+    then git remote add GH https://github.com/DIRACGrid/DIRAC.git; git fetch --no-tags GH integration; git branch -vv; git diff -U0 GH/integration | pycodestyle --diff;
     fi
 
 ## ignore errors for sourcefiles "-i"
