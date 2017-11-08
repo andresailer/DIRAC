@@ -55,14 +55,15 @@ def condorIDFromJobRef(jobRef):
   condorID = jobURL.split("/")[-1]
   return jobURL, condorID
 
-def findFile( workingDir, fileName ):
+
+def findFile(workingDir, fileName ):
   """ find a pilot out, err, log file """
   res = Subprocess().systemCall("find %s -name '%s'" % (workingDir, fileName), shell=True)
   if not res['OK']:
     return res
   paths = res['Value'][1].splitlines()
   if not paths:
-    return S_ERROR( errno.ENOENT, "Could not find %s in directory %s" % ( fileName, workingDir ) )
+    return S_ERROR(errno.ENOENT, "Could not find %s in directory %s" % (fileName, workingDir))
   return S_OK(paths)
 
 def getCondorLogFile( pilotRef ):
