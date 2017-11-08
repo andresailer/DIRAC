@@ -48,20 +48,22 @@ MANDATORY_PARAMETERS = [ 'Queue' ]
 DEFAULT_WORKINGDIRECTORY = '/opt/dirac/pro/runit/WorkloadManagement/SiteDirectorHT'
 DEFAULT_DAYSTOKEEPLOGS = 15
 
-def condorIDFromJobRef( jobRef ):
+
+def condorIDFromJobRef(jobRef):
   """return tuple of "jobURL" and condorID from the jobRef string"""
   jobURL = jobRef.split(":::")[0]
   condorID = jobURL.split("/")[-1]
-  return jobURL,condorID
+  return jobURL, condorID
 
-def findFile( workingDir, fileName ):
+
+def findFile(workingDir, fileName ):
   """ find a pilot out, err, log file """
   res = Subprocess().systemCall("find %s -name '%s'" % (workingDir, fileName), shell=True)
   if not res['OK']:
     return res
   paths = res['Value'][1].splitlines()
   if not paths:
-    return S_ERROR( errno.ENOENT, "Could not find %s in directory %s" % ( fileName, workingDir ) )
+    return S_ERROR(errno.ENOENT, "Could not find %s in directory %s" % (fileName, workingDir))
   return S_OK(paths)
 
 def getCondorLogFile( pilotRef ):
