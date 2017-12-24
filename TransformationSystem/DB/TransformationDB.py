@@ -1248,7 +1248,6 @@ class TransformationDB(DB):
         return S_ERROR("Not all supplied files available in the transformation database")
 
     # Insert the task into the jobs table and retrieve the taskID
-    self.lock.acquire()
     req = "INSERT INTO TransformationTasks(TransformationID, ExternalStatus, ExternalID, TargetSE,"
     req = req + " CreationTime, LastUpdateTime)"
     req = req + " VALUES (%s,'%s','%d','%s', UTC_TIMESTAMP(), UTC_TIMESTAMP());" % (transID, 'Created', 0, se)
