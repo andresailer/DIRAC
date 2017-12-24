@@ -25,6 +25,10 @@ An timeInterval class provides a method to check
 if a give datetime is in the defined interval.
 
 """
+
+from contextlib import contextmanager
+import timeit
+
 import time as nativetime
 import datetime
 from types import StringTypes
@@ -42,6 +46,21 @@ day = datetime.timedelta(days=1)
 week = datetime.timedelta(days=7)
 
 dt = datetime.datetime(2000, 1, 1)
+
+
+@contextmanager
+def timeBlock(prefix=""):
+  """Log the time usage in a code block.
+
+  :param str prefix: the prefix text to show
+  """
+  start = timeit.default_timer()
+  try:
+    yield
+  finally:
+    end = timeit.default_timer()
+    elapsed_seconds = float("%3.5f" % (end - start))
+    print '%s: Elapsed Seconds: %s' % (prefix, elapsed_seconds)
 
 
 def timeThis(method):
