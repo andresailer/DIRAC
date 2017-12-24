@@ -134,7 +134,7 @@ class TransformationClient( Client ):
     # getting transformationFiles - incrementally
     offsetToApply = offset
     retries = 5
-    limit = limit if limit else 10000
+    limit = limit if limit else 200
     transID = condDict.get( 'TransformationID', 'Unknown' )
     while True:
       res = rpcClient.getTransformationFiles( condDict, older, newer, timeStamp, orderAttribute, limit, offsetToApply )
