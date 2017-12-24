@@ -47,6 +47,8 @@ from DIRAC.Workflow.Utilities.Utils import getStepDefinition, addStepToWorkflow
 
 from DIRAC.Core.Utilities.Time import timeBlock, timeThis
 
+from DIRAC.Core.Utilities.Time import timeBlock, timeThis
+
 __RCSID__ = "$Id$"
 
 COMPONENT_NAME = '/Interfaces/API/Job'
