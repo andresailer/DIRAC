@@ -11,6 +11,21 @@ from DIRAC.TransformationSystem.Client.PluginBase import PluginBase
 
 __RCSID__ = "$Id$"
 
+from DIRAC.Core.Utilities.Time import timeBlock, timeThis
+
+from collections import defaultdict
+import datetime
+
+seCache = defaultdict(dict)
+def _cacheGetSitesForSE(seName):
+  if not(seName in seCache and seCache[seName]['expire'] > datetime.datetime.now()):
+    print "New Entry", seName
+    result = getSitesForSE(seName)
+    seCache[seName]['data'] = result
+    seCache[seName]['expire'] = datetime.datetime.now() + datetime.timedelta(seconds=300)
+  else:
+    print  "CacheHit:", seName
+  return seCache[seName]['data']
 
 class TaskManagerPlugin(PluginBase):
   """ A TaskManagerPlugin object should be instantiated by every TaskManager object.
@@ -41,7 +56,7 @@ class TaskManagerPlugin(PluginBase):
       return destSites
 
     for se in seList:
-      res = getSitesForSE(se)
+      res = _cacheGetSitesForSE(se)
       if not res['OK']:
         gLogger.warn("Could not get Sites associated to SE", res['Message'])
       else:
