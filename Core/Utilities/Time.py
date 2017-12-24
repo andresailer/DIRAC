@@ -66,7 +66,7 @@ def timeBlock(prefix=""):
     print '%s: Elapsed Seconds: %s' % (prefix, elapsed_seconds)
 
 
-def timeThis( method ):
+def timeThis(method):
   """ Function to be used as a decorator for timing other functions/methods
   """
 
