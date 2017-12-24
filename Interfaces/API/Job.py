@@ -45,6 +45,8 @@ from DIRAC.ConfigurationSystem.Client.Helpers import Resources
 from DIRAC.Interfaces.API.Dirac import Dirac
 from DIRAC.Workflow.Utilities.Utils import getStepDefinition, addStepToWorkflow
 
+from DIRAC.Core.Utilities.Time import timeBlock, timeThis
+
 __RCSID__ = "$Id$"
 
 COMPONENT_NAME = '/Interfaces/API/Job'
@@ -67,9 +69,9 @@ class Job( API ):
     self.type = 'User'
     self.priority = 1
     vo = ''
-    ret = getProxyInfo( disableVOMS = True )
-    if ret['OK'] and 'group' in ret['Value']:
-      vo = getVOForGroup( ret['Value']['group'] )
+    # ret = getProxyInfo( disableVOMS = True )
+    # if ret['OK'] and 'group' in ret['Value']:
+    #   vo = getVOForGroup( ret['Value']['group'] )
     self.group = vo
     self.site = 'ANY'  # ANY
     # self.setup = 'Development'
