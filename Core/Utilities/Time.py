@@ -36,6 +36,9 @@ import datetime
 from types import StringTypes
 import sys
 
+import shelve
+from hashlib import md5
+
 __RCSID__ = "$Id$"
 
 
