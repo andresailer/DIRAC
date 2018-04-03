@@ -82,9 +82,8 @@ class JobLoggingDB(DB):
         time_order = round(epoc, 3)
 
     cmd = "INSERT INTO LoggingInfo (JobId, Status, MinorStatus, ApplicationStatus, " + \
-          "StatusTime, StatusTimeOrder, StatusSource) VALUES (%d,'%s','%s','%s','%s',%f,'%s')" % \
-        (int(jobID), status, minor, application[:255],
-         str(_date), time_order, source)
+          """StatusTime, StatusTimeOrder, StatusSource) VALUES (%d,"%s","%s","%s","%s",%f,"%s")""" % \
+        (int(jobID), status, minor, application, str(_date), time_order, source)
 
     return self._update(cmd)
 
