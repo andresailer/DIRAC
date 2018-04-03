@@ -80,7 +80,7 @@ class JobLoggingDB(DB):
     epoc = time.mktime(_date.timetuple()) + _date.microsecond / 1000000. - MAGIC_EPOC_NUMBER
 
     cmd = "INSERT INTO LoggingInfo (JobId, Status, MinorStatus, ApplicationStatus, " + \
-          "StatusTime, StatusTimeOrder, StatusSource) VALUES (%d,'%s','%s','%s','%s',%f,'%s')" % \
+          """StatusTime, StatusTimeOrder, StatusSource) VALUES (%d,"%s","%s","%s","%s",%f,"%s")""" % \
         (int(jobID), status, minorStatus, applicationStatus[:255],
          str(_date), epoc, source[:32])
 
