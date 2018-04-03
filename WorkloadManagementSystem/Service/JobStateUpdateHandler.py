@@ -63,6 +63,8 @@ class JobStateUpdateHandler(RequestHandler):
         if i:
           infoStr = "Found job in Staging after %d seconds" % i
         break
+      if status == 'Done':
+        return S_OK('Job is already Done')
       time.sleep(1)
     if status != 'Staging':
       return S_OK('Job is not in Staging after %d seconds' % trials)
