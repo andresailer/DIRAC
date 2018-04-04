@@ -415,6 +415,8 @@ class JobDB( DB ):
 
     result = self.getJobAttributes( jobID, [attribute] )
     if result['OK']:
+      if attribute not in result['Value']:
+        return S_ERROR("Attribute %s not found for job %s" % (attribute, jobID))
       value = result['Value'][attribute]
       return S_OK( value )
     else:
