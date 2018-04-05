@@ -408,6 +408,14 @@ class SandboxStoreHandler(RequestHandler):
   ##################
   # Purge sandboxes
 
+  types_remove = [basestring, basestring]
+  def export_remove( self, url, something ):
+    """ dummy remove to prevent error
+    """
+    gLogger.info( "Trying to remove : %s, something %r" %(url, something))
+    return S_OK()
+
+
   def purgeUnusedSandboxes(self):
     # If a purge is already working skip
     SandboxStoreHandler.__purgeLock.acquire()
@@ -494,8 +502,11 @@ class SandboxStoreHandler(RequestHandler):
         gLogger.exception("Exception while setting deletion request")
         return S_ERROR("Cannot set deletion request: %s" % str(e))
     else:
-      gLogger.info("Deleting external Sandbox")
+      gLogger.info("Deleting external Sandbox %s from %s" % (SEPFN, SEName))
       try:
+        if SEName == "ProductionSandboxSE":
+          gLogger.info("Outdated ProductionSandboxSE: skip")
+          return S_OK()
         return StorageElement(SEName).removeFile(SEPFN)
       except Exception as e:
         gLogger.exception("RM raised an exception while trying to delete a remote sandbox")
