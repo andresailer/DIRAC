@@ -1144,9 +1144,13 @@ class FileManagerBase(object):
       return S_OK(files)
     fileIDNames = {}
     for fileName, fileDict in res['Value'].items():
-      files[fileName] = {}
-      files[fileName]['MetaData'] = fileDict
-      fileIDNames[fileDict['FileID']] = fileName
+      try:
+        files[fileName] = {}
+        files[fileName]['MetaData'] = fileDict
+        fileIDNames[fileDict['FileID']] = fileName
+      except KeyError as err:
+        gLogger.error( "Key error for filename ", "%s: %s, %s (%r)" % (fileName, fileDict, dirID, err))
+        continue
 
     if verbose:
       result = self._getFileReplicas(fileIDNames.keys(), connection=connection)
