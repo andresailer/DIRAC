@@ -495,14 +495,6 @@ class ReplicateAndRegister(DMSRequestOperationsBase):
           self.log.warn("Request to replicate %s to an existing location: %s" % (lfn, targetSE))
           opFile.Status = 'Done'
           continue
-        #FIXME: until the taskManager has given SourceSE to all operations...
-        if sourceSE == 'CERN-DST-EOS' and len(validReplicas) > 1 and targetSE != 'CERN-SRM':
-          if 'DESY-SRM' in validReplicas:
-            sourceSE = 'DESY-SRM'
-            self.log.info("Taking sourceSE (%s) not EOS" % sourceSE)
-          else:
-            sourceSE = random.choice(validReplicas[1:])
-            self.log.info("Taking random sourceSE (%s) not EOS" % sourceSE)
         res = self.dm.replicateAndRegister(lfn, targetSE, sourceSE=sourceSE, catalog=catalogs)
         if res["OK"]:
 
