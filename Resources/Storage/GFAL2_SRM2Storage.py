@@ -21,8 +21,8 @@ class GFAL2_SRM2Storage( GFAL2_StorageBase ):
   """ SRM2 SE class that inherits from GFAL2StorageBase
   """
 
-  _INPUT_PROTOCOLS = ['file', 'root', 'srm', 'gsiftp']
-  _OUTPUT_PROTOCOLS = ['file', 'root', 'dcap', 'gsidcap', 'rfio', 'srm', 'gsiftp']
+  _INPUT_PROTOCOLS = ['file', 'srm', 'gsiftp']
+  _OUTPUT_PROTOCOLS = ['file', 'dcap', 'gsidcap', 'rfio', 'srm', 'gsiftp']
 
 
 
