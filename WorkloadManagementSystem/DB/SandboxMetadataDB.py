@@ -333,8 +333,16 @@ class SandboxMetadataDB(DB):
         :returns: S_OK with sandbox ID
 
     """
-    sqlCond = ["s.SEPFN=%s" % self._escapeString(SEPFN)['Value'],
-               "s.SEName=%s" % self._escapeString(SEName)['Value'],
+    resPFN = self._escapeString(SEPFN)
+    if not resPFN['OK']:
+      self.log.error('Failed to escape SEPFN', resPFN['Message'])
+      return resPFN
+    resSE = self._escapeString(SEName)
+    if not resSE['OK']:
+      self.log.error('Failed to escape SEName', resSE['Message'])
+      return resSE
+    sqlCond = ["s.SEPFN=%s" % resPFN['Value'],
+               "s.SEName=%s" % resSE['Value'],
                's.OwnerId=o.OwnerId']
     sqlCmd = "SELECT s.%s FROM `sb_SandBoxes` s, `sb_Owners` o WHERE" % field
     requesterProps = Registry.getPropertiesForEntity(requesterGroup, name=requesterName, dn=requesterDN)
