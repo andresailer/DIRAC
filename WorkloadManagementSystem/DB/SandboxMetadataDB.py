@@ -317,9 +317,23 @@ class SandboxMetadataDB( DB ):
     """
     Get the sandboxId if it exists
     """
-    sqlCond = [ "s.SEPFN=%s" % self._escapeString( SEPFN )['Value'],
-                "s.SEName=%s" % self._escapeString( SEName )['Value'],
+
+    resPFN = self._escapeString(SEPFN)
+    if not resPFN['OK']:
+      self.log.error('Failed to escape SEPFN', resPFN['Message'])
+      return resPFN
+    resSE = self._escapeString(SEName)
+    if not resSE['OK']:
+      self.log.error('Failed to escape SEName', resSE['Message'])
+      return resSE
+
+    sqlCond = ["s.SEPFN=%s" % resPFN['Value'],
+               "s.SEName=%s" % resSE['Value'],
                 's.OwnerId=o.OwnerId' ]
+
+    # sqlCond = [ "s.SEPFN=%s" % self._escapeString( SEPFN )['Value'],
+    #             "s.SEName=%s" % self._escapeString( SEName )['Value'],
+    #             's.OwnerId=o.OwnerId' ]
     sqlCmd = "SELECT s.SBId FROM `sb_SandBoxes` s, `sb_Owners` o WHERE"
     requesterProps = CS.getPropertiesForEntity( requesterGroup, name = requesterName )
     if Properties.JOB_ADMINISTRATOR in requesterProps or Properties.JOB_MONITOR in requesterProps:
