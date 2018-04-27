@@ -242,6 +242,14 @@ class RequestTasks( TaskBase ):
       transfer.Type = requestOperation
       transfer.TargetSE = task['TargetSE']
 
+      resSource = self.transClient.getTransformationParameters(transID, 'SourceSE')
+      if resSource['OK']:
+        rawSource = resSource['Value']
+        if isinstance(rawSource, basestring) and len(rawSource.split("'"))==3:
+          transfer.SourceSE = rawSource.split("'")[1]
+        else:
+          self._logError("Could not deduce sourceSE", str(res['Value']))
+
       # If there are input files
       if task.get( 'InputData' ):
         if isinstance( task['InputData'], list ):
