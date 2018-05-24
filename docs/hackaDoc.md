@@ -35,7 +35,7 @@ Independent test of some small piece of code. No dependency on external
 packages, running services, databases, file system...
 
 To run unit tests in DIRAC:
-```
+```bash
 cd $DIRAC
 py.test
 ```
@@ -44,7 +44,7 @@ py.test parses folders and looks for tests. Configured in `pytest.ini`.
 ### Unit test template
 
 File Test_module.py
-```
+```python
 """Test some module"""
 
 import unittest
@@ -95,12 +95,12 @@ if __name__ == "__main__":
 
 Documentation is created with `sphinx`
 
-```
+```bash
 pip install sphinx
 ```
 
 To create it locally:
-```
+```bash
 cd $DIRAC/docs
 #export READTHEDOCS=True ## if you want to create code documentation as well, runs MakeDoc.py
  make html
