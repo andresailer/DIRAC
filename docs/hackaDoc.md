@@ -6,7 +6,7 @@ In github DIRAC is using `Travis` to run unit tests, pylint, doc creation and fo
 
 Travis is configured with a `yml` file
 https://github.com/DIRACGrid/DIRAC/blob/integration/.travis.yml
-```
+```yml
 language: python
 python:
   - "2.7"
