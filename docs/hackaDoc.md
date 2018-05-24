@@ -2,7 +2,7 @@
 
 ## Continuous Integration
 
-In github DIRAC is using `Travis` to run unit tests for every pull request.
+In github DIRAC is using `Travis` to run unit tests, pylint, doc creation and formatting check for every pull request.
 
 Travis is configured with a `yml` file
 https://github.com/DIRACGrid/DIRAC/blob/integration/.travis.yml
@@ -94,6 +94,7 @@ if __name__ == "__main__":
 ## Documentation
 
 Documentation is created with `sphinx`
+
 ```
 pip install sphinx
 ```
@@ -111,7 +112,7 @@ Code documentation is automatically created via script
 
 ### Documentation for extensions:
 
-Inside sphinx external documentatins can be automatically linked.
+Inside sphinx external documentations can be automatically linked.
 
 e.g.: iLCDirac documentation links against DIRAC base classes:
 
@@ -127,10 +128,20 @@ http://dirac.readthedocs.io/en/latest/
 
 ### Tasks:
 
+#### Testing
+
+* Add CI to your DIRAC extension, start writing some tests, pylint, ...
+
+* Try to add a test for you favorite untested piece of DIRAC
+
+#### Docs
+
 * Command reference is not yet automatically generated. The script
   DIRAC/docs/Tools/buildScriptDoc.py exists but calling it inside `readthedocs`
-  needs to be fixed
+  needs to be fixed (though some information for commands hand-crafted and
+  cannot be automatically created)
 
 * Release notes could also be added to the documentation page. There is code
   that generates `rst` files from the DIRAC release notes already. With some
   adaption this could be added to the configuration as well
+
