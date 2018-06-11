@@ -50,8 +50,8 @@ class GFAL2_XROOTStorage( GFAL2_StorageBase ):
     self.pluginName = 'GFAL2_XROOT'
 
     # why is this here ?!
-    self.protocolParameters['WSUrl'] = 0
-    self.protocolParameters['SpaceToken'] = 0
+    self.protocolParameters['WSUrl'] = ''
+    self.protocolParameters['SpaceToken'] = ''
 
     # We don't need extended attributes for metadata
     self._defaultExtendedAttributes = None
