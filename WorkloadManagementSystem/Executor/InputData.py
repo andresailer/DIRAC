@@ -10,6 +10,7 @@ import time
 
 from DIRAC import S_OK, S_ERROR
 from DIRAC.Core.Utilities.Proxy import executeWithUserProxy
+from DIRAC.Core.Utilities.Time import timeBlock, timeThis
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
 from DIRAC.Resources.Storage.StorageElement import StorageElement
 from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
@@ -197,17 +198,19 @@ class InputData(OptimizerExecutor):
     """
     lfns = inputData
 
-    result = jobState.getManifest()
-    if not result['OK']:
-      self.jobLog.error("Failed to get job manifest", result['Message'])
-      return result
-    manifest = result['Value']
-    vo = manifest.getOption('VirtualOrganization')
-    startTime = time.time()
-    dm = self.__getDataManager(vo)
-    if dm is None:
-      return S_ERROR('Failed to instantiate DataManager for vo %s' % vo)
-    else:
+    with timeBlock("_resolveInputData"):
+      result = jobState.getManifest()
+      if not result['OK']:
+        self.jobLog.error("Failed to get job manifest", result['Message'])
+        return result
+      manifest = result['Value']
+      vo = manifest.getOption('VirtualOrganization')
+      startTime = time.time()
+      dm = self.__getDataManager(vo)
+      if dm is None:
+        return S_ERROR('Failed to instantiate DataManager for vo %s' % vo)
+
+    with timeBlock("ReplicaLookup"):
       # This will return already active replicas, excluding banned SEs, and
       # removing tape replicas if there are disk replicas
       result = dm.getReplicasForJobs(lfns)
@@ -271,6 +274,7 @@ class InputData(OptimizerExecutor):
     return S_OK(resolvedData)
 
   #############################################################################
+  @timeThis
   def __checkReplicas(self, replicaDict, vo):
     """Check that all input lfns have valid replicas and can all be found at least in one single site.
 
@@ -303,6 +307,7 @@ class InputData(OptimizerExecutor):
     return S_OK(okReplicas)
 
   #############################################################################
+  @timeThis
   def __getSitesForSE(self, seName):
     """ Returns a list of sites having the given SE as a local one.
         Uses the local cache of the site-se information
@@ -324,6 +329,7 @@ class InputData(OptimizerExecutor):
     return S_OK(self.__SEToSiteMap[seName])
 
   #############################################################################
+  @timeThis
   def __getSiteCandidates(self, okReplicas, vo):
     """ This method returns a list of possible site candidates based on the job input data requirement.
 

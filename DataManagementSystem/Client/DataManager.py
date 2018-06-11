@@ -34,6 +34,7 @@ from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers
 from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
 from DIRAC.Resources.Storage.StorageElement import StorageElement
 from DIRAC.ResourceStatusSystem.Client.ResourceStatus import ResourceStatus
+from DIRAC.Core.Utilities.Time import timeBlock
 
 # # RSCID
 __RCSID__ = "$Id$"
@@ -1718,7 +1719,8 @@ class DataManager(object):
     catalogReplicas = {}
     failed = {}
     for lfnChunk in breakListIntoChunks(lfns, 1000):
-      res = self.fileCatalog.getReplicas(lfnChunk, allStatus=allStatus)
+      with timeBlock("gRep1"):
+        res = self.fileCatalog.getReplicas(lfnChunk, allStatus=allStatus)
       if res['OK']:
         catalogReplicas.update(res['Value']['Successful'])
         failed.update(res['Value']['Failed'])
@@ -1753,16 +1755,20 @@ class DataManager(object):
     """ get replicas useful for jobs
     """
     # Call getReplicas with no filter and enforce filters in this method
-    result = self.getReplicas(lfns, allStatus=allStatus, getUrl=getUrl)
+    with timeBlock('gRFJ1'):
+      result = self.getReplicas(lfns, allStatus=allStatus, getUrl=getUrl)
     if not result['OK']:
       return result
     replicaDict = result['Value']
     # For jobs replicas must be active
-    self.__filterActiveReplicas(replicaDict)
+    with timeBlock('gRFJ2'):
+      self.__filterActiveReplicas(replicaDict)
     # For jobs, give preference to disk replicas but not only
-    self.__filterTapeReplicas(replicaDict, diskOnly=diskOnly)
+    with timeBlock('gRFJ3'):
+      self.__filterTapeReplicas(replicaDict, diskOnly=diskOnly)
     # don't use SEs excluded for jobs (e.g. Failover)
-    self.__filterReplicasForJobs(replicaDict)
+    with timeBlock('gRFJ4'):
+      self.__filterReplicasForJobs(replicaDict)
     return S_OK(replicaDict)
 
   # 3
