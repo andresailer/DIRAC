@@ -210,6 +210,7 @@ def fromString( myDate = None ):
         return datetime.datetime( year = 2099,
                                   month = 1,
                                   day = 1 )
+      dateTuple = dateTuple[0].strip('IOERRORioerror'), dateTuple[1], dateTuple[2]
       try:
         return ( datetime.datetime( year = dateTuple[0],
                                     month = dateTuple[1],
