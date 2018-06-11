@@ -255,8 +255,16 @@ class RequestTasks(TaskBase):
         rawSource = resSource['Value']
         if isinstance(rawSource, basestring) and len(rawSource.split("'"))==3:
           transfer.SourceSE = rawSource.split("'")[1]
+        elif isinstance(rawSource, basestring):
+          try:
+            ses = eval(rawSource)
+            if 'CERN-SRM' in ses and len(ses) > 1:
+              ses.remove('CERN-SRM')
+            transfer.SourceSE = ses
+          except Exception as e:
+            self._logError("Exception trying to deduce sourceSE", repr(e))
         else:
-          self._logError("Could not deduce sourceSE", str(res['Value']))
+          self._logError("Could not deduce sourceSE", repr(resSource['Value']))
 
       # If there are input files
       if task.get('InputData'):
