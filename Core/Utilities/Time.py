@@ -34,7 +34,6 @@ import datetime
 from types import StringTypes
 import sys
 
-import decorator
 import shelve
 from hashlib import md5
 
@@ -63,36 +62,6 @@ def timeBlock(prefix=""):
     end = timeit.default_timer()
     elapsed_seconds = float("%3.5f" % (end - start))
     print '%s: Elapsed Seconds: %s'%( prefix, elapsed_seconds )
-
-
-def scached(cache_file, expiry):
-  """ Decorator setup """
-
-  def scached_closure(func, *args, **kw):
-    """ The actual decorator """
-    key = md5(':'.join([func.__name__, str(args), str(kw)])).hexdigest()
-    d = shelve.open(cache_file)
-
-    # Expire old data if we have to
-    if key in d:
-      if d[key]['expires_on'] < datetime.datetime.now():
-        del d[key]
-
-    # Get new data if we have to
-    if key not in d:
-      data = func(*args, **kw)
-      d[key] = {
-        'expires_on' : datetime.datetime.now() + expiry,
-        'data': data,
-      }
-
-    # Return what we got
-    result = d[key]['data']
-    d.close()
-
-    return result
-
-  return decorator.decorator(scached_closure)
 
 def timeThis( method ):
   """ Function to be used as a decorator for timing other functions/methods
