@@ -47,7 +47,7 @@ def hexAdlerToInt( hexAdler, pos = True ):
     # Will always try to return the positive integer value of the provided hex
     return int( hexAdler, 16 ) & 0xffffffff
   except Exception as error:
-    print repr( error ).replace( ',)', ')' )
+    #print "hexAdlerToInt:",repr( error ).replace( ',)', ')' )
     return False
 
 def compareAdler( adler1, adler2 ):
