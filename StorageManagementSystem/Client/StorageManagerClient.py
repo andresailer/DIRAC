@@ -13,6 +13,7 @@ from DIRAC.Core.Utilities.Proxy import UserProxy
 from DIRAC.DataManagementSystem.Client.DataManager  import DataManager
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers
 from DIRAC.Resources.Storage.StorageElement         import StorageElement
+from DIRAC.Core.Utilities.Time import timeBlock
 
 def getFilesToStage( lfnList, jobState = None, checkOnlyTapeSEs = None, jobLog = None ):
   """ Utility that returns out of a list of LFNs those files that are offline,
@@ -25,7 +26,8 @@ def getFilesToStage( lfnList, jobState = None, checkOnlyTapeSEs = None, jobLog =
   if isinstance( lfnList, basestring ):
     lfnList = [lfnList]
 
-  lfnListReplicas = dm.getReplicasForJobs( lfnList, getUrl = False )
+  with timeBlock('gFTS1'):
+    lfnListReplicas = dm.getReplicasForJobs(lfnList, getUrl=False)
   if not lfnListReplicas['OK']:
     return lfnListReplicas
 
@@ -73,11 +75,12 @@ def getFilesToStage( lfnList, jobState = None, checkOnlyTapeSEs = None, jobLog =
       userName = None
       userGroup = None
     # Check whether files are Online or Offline, or missing at SE
-    result = _checkFilesToStage( seToLFNs, onlineLFNs, offlineLFNs, absentLFNs,  # pylint: disable=unexpected-keyword-arg
-                                 checkOnlyTapeSEs = checkOnlyTapeSEs, jobLog = jobLog,
-                                 proxyUserName = userName,
-                                 proxyUserGroup = userGroup,
-                                 executionLock = True )
+    with timeBlock('gFTS2'):
+      result = _checkFilesToStage(seToLFNs, onlineLFNs, offlineLFNs, absentLFNs,  # pylint: disable=unexpected-keyword-arg
+                                  checkOnlyTapeSEs=checkOnlyTapeSEs, jobLog=jobLog,
+                                  proxyUserName=userName,
+                                  proxyUserGroup=userGroup,
+                                  executionLock=True)
 
     if not result['OK']:
       return result
@@ -86,7 +89,8 @@ def getFilesToStage( lfnList, jobState = None, checkOnlyTapeSEs = None, jobLog =
     # Get the online SEs
     dmsHelper = DMSHelpers()
     onlineSEs = set( se for ses in onlineLFNs.values() for se in ses )
-    onlineSites = set( dmsHelper.getLocalSiteForSE( se ).get( 'Value' ) for se in onlineSEs ) - {None}
+    with timeBlock('gFTS3'):
+      onlineSites = set(dmsHelper.getLocalSiteForSE(se).get('Value') for se in onlineSEs) - {None}
     for lfn in offlineLFNs:
       ses = offlineLFNs[lfn]
       if len( ses ) == 1:
