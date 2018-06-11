@@ -294,6 +294,8 @@ class DMSHelpers(object):
     sites = self._getLocalSitesForSE(se)
     if not sites['OK'] or not sites['Value']:
       return sites
+    if not sites['Value']:
+      return S_OK()
     return S_OK(sites['Value'][0])
 
   def _getLocalSitesForSE(self, se):
