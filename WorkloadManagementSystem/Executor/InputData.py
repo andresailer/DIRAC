@@ -14,6 +14,7 @@ from DIRAC.DataManagementSystem.Utilities.DMSHelpers                 import DMSH
 from DIRAC.DataManagementSystem.Client.DataManager                   import DataManager
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations             import Operations
 from DIRAC.Core.Utilities.Proxy                                      import executeWithUserProxy
+from DIRAC.Core.Utilities.Time                                       import timeBlock, timeThis
 
 __RCSID__ = "$Id$"
 
@@ -133,70 +134,76 @@ class InputData( OptimizerExecutor ):
   def _resolveInputData( self, jobState, inputData ):
     """ This method checks the file catalog for replica information.
     """
-    lfns = inputData
+    with timeBlock("_resolveInputData"):
 
-    result = jobState.getManifest()
-    if not result['OK']:
-      return result
-    manifest = result['Value']
-    vo = manifest.getOption( 'VirtualOrganization' )
-    startTime = time.time()
-    dm = self.__getDataManager( vo )
-    if dm is None:
-      return S_ERROR( 'Failed to instantiate DataManager for vo %s' % vo )
-    else:
-      # This will return already active replicas, excluding banned SEs, and removing tape replicas if there are disk replicas
-      result = dm.getReplicasForJobs( lfns )
-    self.jobLog.info( 'Catalog replicas lookup time: %.2f seconds ' % ( time.time() - startTime ) )
-    if not result['OK']:
-      self.log.warn( result['Message'] )
-      return result
-
-    replicaDict = result['Value']
-
-    self.jobLog.verbose( "REPLICA DICT: %s" % replicaDict )
-
-    result = self.__checkReplicas( jobState, replicaDict, vo )
-
-    if not result['OK']:
-      self.jobLog.error( "Failed to check replicas", result['Message'] )
-      return result
-    siteCandidates = result[ 'Value' ]
-
-    if self.ex_getOption( 'CheckFileMetadata', True ):
+      lfns = inputData
+      
       result = jobState.getManifest()
       if not result['OK']:
         return result
       manifest = result['Value']
       vo = manifest.getOption( 'VirtualOrganization' )
-      fc = self.__getFileCatalog( vo )
-      if fc is None:
-        return S_ERROR( 'Failed to instantiate FileCatalog for vo %s' % vo )
+      startTime = time.time()
+      dm = self.__getDataManager( vo )
+      if dm is None:
+        return S_ERROR( 'Failed to instantiate DataManager for vo %s' % vo )
       else:
-        guidDict = fc.getFileMetadata( lfns )
-      self.jobLog.info( 'Catalog Metadata Lookup Time: %.2f seconds ' % ( time.time() - startTime ) )
-
-      if not guidDict['OK']:
-        self.log.warn( guidDict['Message'] )
-        return guidDict
-
-      failed = guidDict['Value']['Failed']
-      if failed:
-        self.log.warn( 'Failed to establish some GUIDs' )
-        self.log.warn( failed )
-
-      for lfn in replicaDict['Successful']:
-        replicas = replicaDict['Successful'][ lfn ]
-        guidDict['Value']['Successful'][lfn].update( replicas )
-
-    resolvedData = {}
-    resolvedData['Value'] = guidDict
-    resolvedData['SiteCandidates'] = siteCandidates
-    self.jobLog.verbose( "Storing:\n%s" % pprint.pformat( resolvedData ) )
-    result = self.storeOptimizerParam( self.ex_getProperty( 'optimizerName' ), resolvedData )
-    if not result['OK']:
-      self.log.warn( result['Message'] )
-      return result
+        # This will return already active replicas, excluding banned SEs, and removing tape replicas if there are disk replicas
+        with timeBlock("ReplicaLookup"):
+          result = dm.getReplicasForJobs( lfns )
+      # self.jobLog.info( 'Catalog replicas lookup time: %.2f seconds ' % ( time.time() - startTime ) )
+      if not result['OK']:
+        self.log.warn( result['Message'] )
+        return result
+      
+      replicaDict = result['Value']
+      
+      self.jobLog.verbose( "REPLICA DICT: %s" % replicaDict )
+      
+      with timeBlock("__CheckReplicas"):
+        result = self.__checkReplicas( jobState, replicaDict, vo )
+      
+      if not result['OK']:
+        self.jobLog.error( "Failed to check replicas", result['Message'] )
+        return result
+      siteCandidates = result[ 'Value' ]
+      
+      if self.ex_getOption( 'CheckFileMetadata', True ):
+        with timeBlock("CheckFileMetadata"):
+          result = jobState.getManifest()
+          if not result['OK']:
+            return result
+          manifest = result['Value']
+          vo = manifest.getOption( 'VirtualOrganization' )
+          fc = self.__getFileCatalog( vo )
+          if fc is None:
+            return S_ERROR( 'Failed to instantiate FileCatalog for vo %s' % vo )
+          else:
+            with timeBlock("getFileMetadata"):
+              guidDict = fc.getFileMetadata( lfns )
+          # self.jobLog.info( 'Catalog Metadata Lookup Time: %.2f seconds ' % ( time.time() - startTime ) )
+          
+          if not guidDict['OK']:
+            self.log.warn( guidDict['Message'] )
+            return guidDict
+          
+          failed = guidDict['Value']['Failed']
+          if failed:
+            self.log.warn( 'Failed to establish some GUIDs' )
+            self.log.warn( failed )
+          
+          for lfn in replicaDict['Successful']:
+            replicas = replicaDict['Successful'][ lfn ]
+            guidDict['Value']['Successful'][lfn].update( replicas )
+      
+      resolvedData = {}
+      resolvedData['Value'] = guidDict
+      resolvedData['SiteCandidates'] = siteCandidates
+      self.jobLog.verbose( "Storing:\n%s" % pprint.pformat( resolvedData ) )
+      result = self.storeOptimizerParam( self.ex_getProperty( 'optimizerName' ), resolvedData )
+      if not result['OK']:
+        self.log.warn( result['Message'] )
+        return result
     return S_OK( resolvedData )
 
   #############################################################################
@@ -229,6 +236,7 @@ class InputData( OptimizerExecutor ):
     return self.__getSiteCandidates( okReplicas, vo )
 
   #############################################################################
+  @timeThis
   def __getSitesForSE( self, seName ):
     """ Returns a list of sites having the given SE as a local one.
         Uses the local cache of the site-se information
@@ -237,6 +245,7 @@ class InputData( OptimizerExecutor ):
     # Empty the cache if too old
     now = time.time()
     if ( now - self.__lastCacheUpdate ) > self.__cacheLifeTime:
+      print "**** clearing SE cache"
       self.log.verbose( 'Resetting the SE to site mapping cache' )
       self.__SEToSiteMap = {}
       self.__lastCacheUpdate = now
@@ -249,6 +258,7 @@ class InputData( OptimizerExecutor ):
     return S_OK( self.__SEToSiteMap[ seName ] )
 
   #############################################################################
+  @timeThis
   def __getSiteCandidates( self, okReplicas, vo ):
     """ This method returns a list of possible site candidates based on the job input data requirement.
 
