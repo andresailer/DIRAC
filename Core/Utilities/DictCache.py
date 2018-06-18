@@ -69,6 +69,9 @@ class DictCache(object):
     # Function to clean the elements
     self.__deleteFunction = deleteFunction
 
+  def __len__(self):
+    return len(self.__cache)
+
   @property
   def lock(self):
     """ Return the lock.
