@@ -24,6 +24,9 @@ class DictCache( object ):
     self.__cache = {}
     self.__deleteFunction = deleteFunction
 
+  def __len__(self):
+    return len(self.__cache)
+
   @property
   def lock( self ):
     """ lock """
