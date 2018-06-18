@@ -1366,7 +1366,7 @@ class SiteDirector(AgentModule):
     """
 
     self.log.info('Retrieving output for pilot %s' % pRef)
-    pilotStamp = pilotDict[pRef]['PilotStamp']
+    pilotStamp = pilotDict[pRef].get('PilotStamp', '')
     pRefStamp = pRef
     if pilotStamp:
       pRefStamp = pRef + ':::' + pilotStamp
