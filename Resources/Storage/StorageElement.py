@@ -60,12 +60,15 @@ class StorageElementCache(object):
 
     argTuple = (tId, name, plugins, vo, proxyLoc)
     seObj = self.seCache.get(argTuple)
-
+    
     if not seObj:
       seObj = StorageElementItem(name, plugins, vo, hideExceptions=hideExceptions)
       # Add the StorageElement to the cache for 1/2 hour
+      print "adding", argTuple, "number", len(self.seCache)
       self.seCache.add(argTuple, 1800, seObj)
-
+    else:
+      print "re-using SE", argTuple, "number", len(self.seCache)
+      
     return seObj
 
 
