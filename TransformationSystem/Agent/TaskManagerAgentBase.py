@@ -117,7 +117,6 @@ class TaskManagerAgentBase(AgentModule, TransformationAgentsUtilities):
   def execute(self):
     """ The TaskManagerBase execution method is just filling the Queues of transformations that need to be processed
     """
-
     operationsOnTransformationDict = {}
     owner, ownerGroup, ownerDN = None, None, None
     # getting the credentials for submission
