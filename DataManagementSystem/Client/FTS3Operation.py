@@ -429,6 +429,9 @@ class FTS3TransferOperation(FTS3Operation):
     res = self.reqClient.getRequestStatus(self.rmsReqID)
     if not res['OK']:
       log.error("Could not get request status", res)
+      if "Request %s does not exist" % self.rmsReqID in res['Message']:
+        log.info("Request with id %s does not exist (any more)" % self.rmsReqID)
+        return S_OK('Done')
       return res
     status = res['Value']
 
