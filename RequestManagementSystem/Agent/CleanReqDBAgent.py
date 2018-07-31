@@ -109,7 +109,7 @@ class CleanReqDBAgent( AgentModule ):
           self.log.error( "execute: unable to read request '%s': %s" % ( requestID, getRequest["Message"] ) )
           continue
         getRequest = getRequest["Value"]
-        if getRequest and getRequest.LastUpdate < kickTime:
+        if getRequest and lastUpdate < kickTime:
           self.log.info( "execute: kick assigned request (%s/'%s') in status %s" % ( requestID,
                                                                                       getRequest.RequestName,
                                                                                       getRequest.Status ) )
@@ -120,7 +120,7 @@ class CleanReqDBAgent( AgentModule ):
                                                                                putRequest["Message"] ) )
             continue
           else:
-            self.log.verbose( "Kicked request %d" % putRequest['Value'] )
+            self.log.info( "Kicked request %d" % putRequest['Value'] )
           kicked += 1
 
     # # delete
