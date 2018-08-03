@@ -177,7 +177,9 @@ for the agent restart
         # Set the jobs Failed, send them a kill signal in case they are not really dead and send accounting info
         if setFailed:
           # Send a kill signal to the job such that it cannot continue running
-          WMSClient().killJob( job )
+          userDN = self.jobDB.getJobAttribute(job, 'OwnerDN')['Value']
+          userGroup = self.jobDB.getJobAttribute(job, 'OwnerGroup')['Value']
+          WMSClient(useCertificates=True, delegatedDN=userDN, delegatedGroup=userGroup).killJob(job)
           self.__updateJobStatus( job, 'Failed', setFailed )
           failedCounter += 1
           result = self.__sendAccounting( job )
