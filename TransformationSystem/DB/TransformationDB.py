@@ -426,6 +426,26 @@ class TransformationDB(DB):
       self.__updateTransformationLogging(transID, message, author, connection=connection)
     return res
 
+  def setTransformationGroup(self, transName, newGroup, author, connection=False):
+    """Change the group of a transformation."""
+    res = self._getConnectionTransID(connection, transName)
+    if not res['OK']:
+      return res
+    connection = res['Value']['Connection']
+    transID = res['Value']['TransformationID']
+    resGroup = self._escapeString(newGroup)
+    if not resGroup['OK']:
+      return resGroup
+    newGroup = resGroup['Value']
+    req = "UPDATE Transformations SET TransformationGroup=%s, LastUpdate=UTC_TIMESTAMP() WHERE TransformationID=%d;" \
+          % (newGroup, transID)
+    res = self._update(req, connection)
+    if not res['OK']:
+      return res
+    message = 'Updated TransformationGroup to %r' % newGroup
+    self.__updateTransformationLogging(transID, message, author, connection=connection)
+    return res
+
   def getAdditionalParameters(self, transName, connection=False):
     res = self._getConnectionTransID(connection, transName)
     if not res['OK']:
