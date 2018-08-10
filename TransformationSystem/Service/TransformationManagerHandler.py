@@ -112,6 +112,15 @@ class TransformationManagerHandler(RequestHandler):
     res = database.setTransformationParameter(transName, paramName, paramValue, author=authorDN)
     return self._parseRes(res)
 
+  types_setTransformationGroup = [transTypes, basestring]
+
+  def export_setTransformationGroup(self, transName, newGroup):
+    """Set group for transformation."""
+    credDict = self.getRemoteCredentials()
+    authorDN = credDict['DN']
+    res = database.setTransformationGroup(transName, newGroup, author=authorDN)
+    return self._parseRes(res)
+
   types_deleteTransformationParameter = [transTypes, basestring]
 
   def export_deleteTransformationParameter(self, transName, paramName):
