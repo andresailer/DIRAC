@@ -851,8 +851,7 @@ class SiteDirector(AgentModule):
             (self.queueDict[queue]['CEType'] == 'Local' and ce.batchSystem == 'Condor')):
       os.unlink(executable)
     if not submitResult['OK']:
-      self.log.error('Failed submission to queue %s:\n' %
-                     queue, submitResult['Message'])
+      self.log.error('Failed submission to queue %s:' % queue, submitResult['Message'].replace('\n', '--'))
       pilotsToSubmit = 0
       self.failedQueues[queue] += 1
       return submitResult
