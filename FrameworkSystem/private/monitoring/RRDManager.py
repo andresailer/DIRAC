@@ -147,12 +147,19 @@ class RRDManager( object ):
     for entry in valuesList:
       rrdUpdates.append( "%s:%s" % entry )
     maxRRDArgs = 50
+    warn = False
     for i in range( 0, len( rrdUpdates ), maxRRDArgs ):
       finalCmd = "%s %s" % ( cmd, " ".join( rrdUpdates[ i: i + maxRRDArgs ] ) )
       retVal = self.__exec( finalCmd, rrdFilePath )
       if not retVal[ 'OK' ]:
+        warn = True
         self.log.warn( "Error updating rrd file", "%s rrd: %s" % ( rrdFile, retVal[ 'Message' ] ) )
-    return S_OK( valuesList[-1][0] )
+        if 'minimum one second step' in retVal['Message']:
+          self.log.warn('Aborting update: total %s' % len(rrdUpdates))
+          break
+    ret = S_OK(valuesList[-1][0])
+    ret['Warn'] = warn
+    return ret
 
   def __generateName( self, *args, **kwargs ):
     """

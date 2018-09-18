@@ -154,6 +154,8 @@ class ServiceInterface( object ):
           gLogger.error( "There was an error updating", "%s:%s activity [%s]" % ( sourceId, acName, rrdFile ) )
         else:
           acCatalog.setLastUpdate( sourceId, acName, retDict[ 'Value' ] )
+        if retDict.get('Warn', False):
+          gLogger.error("Warning during update for %s %s (%s): %s" % (acInfo, acName, sourceId, rrdFile))
     if not self.__cmdb_heartbeatComponent( sourceId, componentExtraInfo ):
       for acName in activitiesDict:
         if acName not in unregisteredActivities:
