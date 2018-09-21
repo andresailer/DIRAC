@@ -114,6 +114,10 @@ class FTS3Job(FTS3Serializable):
     now = datetime.datetime.utcnow().replace(microsecond=0)
     self.lastMonitor = now
 
+    if 'job_state' not in jobStatusDict:
+      log = gLogger.getSubLogger(__name__ + ".monitor")
+      log.error("'job_state' not in jobStatusDict", repr(jobStatusDict))
+
     newStatus = jobStatusDict['job_state'].capitalize()
     if newStatus != self.status:
       self.status = newStatus
