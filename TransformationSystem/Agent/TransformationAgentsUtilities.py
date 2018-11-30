@@ -9,6 +9,8 @@ __RCSID__ = "$Id$"
 
 AGENT_NAME = ''
 
+gLogger = gLogger.getSubLogger(__name__)
+
 
 class TransformationAgentsUtilities(object):
   """ logging utilities for threaded TS agents
