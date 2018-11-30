@@ -9,6 +9,7 @@ from DIRAC.Core.Base.Client import Client, createClient
 from DIRAC.Core.Utilities.List import breakListIntoChunks
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
 
+gLogger = gLogger.getSubLogger(__name__)
 
 @createClient('Transformation/TransformationManager')
 class TransformationClient(Client):
@@ -142,15 +143,12 @@ class TransformationClient(Client):
         lfnList = [condDict['LFN']]
       else:
         lfnList = sorted(condDict['LFN'])
-      # If a list of LFNs is given, use chunks of 1000 only
-      limit = limit if limit else 1000
     else:
-      # By default get by chunks of 10000 files
       lfnList = []
-      limit = limit if limit else 10000
     transID = condDict.get('TransformationID', 'Unknown')
     offsetToApply = offset
     retries = 5
+    limit = limit if limit else 1000
     while True:
       if lfnList:
         # If list is exhausted, exit
