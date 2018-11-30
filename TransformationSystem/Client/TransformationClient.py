@@ -7,6 +7,8 @@ from DIRAC.Core.Base.Client                                        import Client
 from DIRAC.Core.Utilities.List                                     import breakListIntoChunks
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations           import Operations
 
+gLogger = gLogger.getSubLogger(__name__)
+
 class TransformationClient( Client ):
 
   """ Exposes the functionality available in the DIRAC/TransformationHandler
@@ -134,7 +136,7 @@ class TransformationClient( Client ):
     # getting transformationFiles - incrementally
     offsetToApply = offset
     retries = 5
-    limit = limit if limit else 200
+    limit = limit if limit else 1000
     transID = condDict.get( 'TransformationID', 'Unknown' )
     while True:
       res = rpcClient.getTransformationFiles( condDict, older, newer, timeStamp, orderAttribute, limit, offsetToApply )
