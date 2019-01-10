@@ -139,6 +139,9 @@ class CleanReqDBAgent( AgentModule ):
       #   if status in ('Done', 'Failed'):
       #     self.log.info('Seems like request has fixed itself and should be put back: %s' % requestID)
 
+
+
+
     # # delete
     statusList = [ "Done", "Failed", "Canceled" ] if self.DEL_FAILED else [ "Done" ]
     requestIDsList = self.requestClient().getRequestIDsList( statusList, self.DEL_LIMIT )
@@ -158,6 +161,8 @@ class CleanReqDBAgent( AgentModule ):
         deleted += 1
         
     #self.kickScheduled()
+
+    self.kickScheduled()
 
     gMonitor.addMark( "KickedRequests", kicked )
     gMonitor.addMark( "DeletedRequests", deleted )

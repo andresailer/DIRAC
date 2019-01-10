@@ -176,7 +176,7 @@ class FTS3Agent(AgentModule):
         * update the FTSFile status
         * update the FTSJob status
     """
-    # General try catch to avoid that the tread dies
+    # General try catch to avoid that the thread dies
     try:
       threadID = current_process().name
       log = gLogger.getSubLogger("_monitorJob/%s" % ftsJob.jobID, child=True)
@@ -192,7 +192,12 @@ class FTS3Agent(AgentModule):
 
       res = ftsJob.monitor(context=context)
 
-      if not res['OK']:
+      if res['OK']:
+        filesStatus = res['Value']
+        # Specify the job ftsGUID to make sure we do not overwrite
+        # status of files already taken by newer jobs
+        res = self.fts3db.updateFileStatus(filesStatus, ftsGUID=ftsJob.ftsGUID)
+      else:
         if res['Message'].startswith('Error getting the job status Not found: %s' % ftsJob.ftsGUID):
           log.info("Job not found, setting job %s to 'Failed': %s" % (ftsJob.jobID, ftsJob.ftsGUID))
           # { fileID : { Status, Error } }
@@ -205,12 +210,6 @@ class FTS3Agent(AgentModule):
           log.error("Error monitoring job", res)
           return ftsJob, res
 
-      # { fileID : { Status, Error } }
-      filesStatus = res['Value']
-
-      # Specify the job ftsGUID to make sure we do not overwrite
-      # status of files already taken by newer jobs
-      res = self.fts3db.updateFileStatus(filesStatus, ftsGUID=ftsJob.ftsGUID)
 
       if not res['OK']:
         log.error("Error updating file fts status", "%s, %s" % (ftsJob.ftsGUID, res))
