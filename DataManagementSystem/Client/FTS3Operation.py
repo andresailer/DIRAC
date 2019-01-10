@@ -307,6 +307,13 @@ class FTS3Operation(FTS3Serializable):
         defunctRmsFileIDs.add(ftsFile.rmsFileID)
         continue
 
+      if ftsFile.status == 'Failed':
+        log.info(
+            "File failed, setting it Failed in RMS", "%s %s" %
+            (ftsFile.lfn, ftsFile.targetSE))
+        defunctRmsFileIDs.add(ftsFile.rmsFileID)
+        continue
+
       # SHOULD NEVER HAPPEN !
       if ftsFile.status != 'Finished':
         log.error(
