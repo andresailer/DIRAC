@@ -1689,8 +1689,7 @@ class DataManager(object):
     catalogReplicas = {}
     failed = {}
     for lfnChunk in breakListIntoChunks(lfns, 1000):
-      with timeBlock("gRep1"):
-        res = self.fileCatalog.getReplicas(lfnChunk, allStatus=allStatus)
+      res = self.fileCatalog.getReplicas(lfnChunk, allStatus=allStatus)
       if res['OK']:
         catalogReplicas.update(res['Value']['Successful'])
         failed.update(res['Value']['Failed'])

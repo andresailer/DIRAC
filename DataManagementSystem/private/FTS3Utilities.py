@@ -135,6 +135,9 @@ def selectUniqueRandomSource(ftsFiles, allowedSources=None):
     if ftsFile.lfn in filteredReplicas['Failed']:
       _log.error("Failed to get active replicas", "%s,%s" %
                  (ftsFile.lfn, filteredReplicas['Failed'][ftsFile.lfn]))
+      if 'No such file or directory' in filteredReplicas['Failed'][ftsFile.lfn]:
+        _log.info("File '%s' does not exist, setting to 'Defunct'" % ftsFile.lfn)
+        ftsFile.status = 'Defunct'
       continue
 
     replicaDict = filteredReplicas['Successful'][ftsFile.lfn]

@@ -123,6 +123,9 @@ class CleanReqDBAgent( AgentModule ):
             self.log.verbose( "Kicked request %d" % putRequest['Value'] )
           kicked += 1
 
+      
+
+
     # # delete
     statusList = [ "Done", "Failed", "Canceled" ] if self.DEL_FAILED else [ "Done" ]
     requestIDsList = self.requestClient().getRequestIDsList( statusList, self.DEL_LIMIT )
@@ -141,8 +144,66 @@ class CleanReqDBAgent( AgentModule ):
           continue
         deleted += 1
 
+    self.kickScheduled()
+
     gMonitor.addMark( "KickedRequests", kicked )
     gMonitor.addMark( "DeletedRequests", deleted )
     self.log.info( "execute: kicked assigned requests = %s" % kicked )
     self.log.info( "execute: deleted finished requests = %s" % deleted )
     return S_OK()
+
+
+  def kickScheduled(self):
+    """Kick requests that have been scheduled for more than 1 week."""
+    now = datetime.datetime.utcnow()
+    kickTime = now - datetime.timedelta(hours=7 * 24)
+    statusList = ["Scheduled"]
+    requestIDsList = self.requestClient().getRequestIDsList(statusList, self.KICK_LIMIT)
+    if not requestIDsList["OK"]:
+      self.log.error("execute: %s" % requestIDsList["Message"])
+      return requestIDsList
+
+    requestIDsList = requestIDsList["Value"]
+    kicked = 0
+    for requestID, status, lastUpdate in requestIDsList:
+      reqStatus = self.requestClient().getRequestStatus(requestID)
+      if not reqStatus['OK']:
+        self.log.error("execute: unable to get request status", reqStatus['Message'])
+        continue
+      status = reqStatus['Value']
+
+      if status != 'Scheduled':
+        continue
+
+      if lastUpdate > kickTime:
+        self.log.info("Request %s has not been scheduled for more than 1 week" % requestID)
+        continue
+
+      getRequest = self.requestClient().peekRequest(requestID)
+      if not getRequest["OK"]:
+        self.log.error("execute: unable to read request '%s': %s" % (requestID, getRequest["Message"]))
+        continue
+      getRequest = getRequest["Value"]
+      if getRequest and getRequest.LastUpdate < kickTime:
+        self.makeRequestWaiting(getRequest)
+        self.log.info("execute: kick scheduled request (%s/'%s') in status %s" % (requestID,
+                                                                                  getRequest.RequestName,
+                                                                                  getRequest.Status))
+        putRequest = self.requestClient().putRequest(getRequest)
+        if not putRequest["OK"]:
+          self.log.error("execute: unable to put request (%s/'%s'): %s" % (requestID,
+                                                                           getRequest.RequestName,
+                                                                           putRequest["Message"]))
+          continue
+        else:
+          self.log.verbose("Kicked request %d" % putRequest['Value'])
+        kicked += 1
+    self.log.info("Execute: kicked scheduled requests = %s" % kicked)
+    return S_OK()
+
+  def makeRequestWaiting(self, request):
+    for operation in request:
+      for lfn in operation:
+        self.log.info("Setting %s to Waiting" % lfn.LFN)
+        lfn.Status = 'Waiting'
+    self.log.info("Request is Waiting?:\n%s" % request)
