@@ -670,3 +670,58 @@ class FTS3DB(object):
       return S_ERROR("getOperationsFromRMSOpID: unexpected exception : %s" % e)
     finally:
       session.close()
+
+  def failFileStatusForJob(self, ftsJob, ftsGUID=None):
+    """Update the file ftsStatus and error
+        The update is only done if the file is not in a final state
+
+        TODO: maybe it should query first the status and filter the rows I want to update !
+
+       :param fileStatusDict : { fileID : { status , error } }
+
+    """
+
+    # This here is inneficient as we update every files, even if it did not change, and we commit every time.
+    # It would probably be best to update only the files that changed.
+    # However, commiting every time is the recommendation of MySQL
+    # (https://dev.mysql.com/doc/refman/5.7/en/innodb-deadlocks-handling.html)
+
+    session = self.dbSession()
+    try:
+      print "Setting files and Job to failed for:", ftsJob.jobID
+      updateFile = {FTS3File.status: 'Failed'}
+      updateJob = {FTS3Job.status: 'Failed'}
+      updateOp = {FTS3Operation.status: 'Processed'}
+      operationIDs = session.query(FTS3Job.operationID)\
+          .filter(FTS3Job.jobID == ftsJob.jobID).all()
+      operationIDs = [oidTuple[0] for oidTuple in operationIDs]
+
+      # If an ftsGUID is specified, add it to the `where` condition
+      whereFiles = [FTS3File.operationID.in_(operationIDs)]
+      if ftsGUID:
+        whereFiles.append(FTS3File.ftsGUID == ftsGUID)
+
+      print "OperationIDs", operationIDs
+      session.execute(update(FTS3File)
+                      .where(and_(*whereFiles))
+                      .values(updateFile)
+                      )
+      session.execute(update(FTS3Job)
+                      .where(FTS3Job.operationID.in_(operationIDs))
+                      .values(updateJob)
+                      )
+      session.execute(update(FTS3Operation)
+                      .where(FTS3Operation.operationID.in_(operationIDs))
+                      .values(updateOp)
+                      )
+
+      session.commit()
+
+    except SQLAlchemyError as e:
+      session.rollback()
+      self.log.exception("failFileStatusForJob: unexpected exception", lException=e)
+      return S_ERROR("failFileStatusForJob: unexpected exception %s" % e)
+    finally:
+      session.close()
+
+    return S_OK()
