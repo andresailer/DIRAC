@@ -629,10 +629,11 @@ class FTS3Agent(AgentModule):
 
         :param ftsJob: the FTS3Job from which we send the accounting info
     """
+    if not hasattr(ftsJob, 'accountingDict'):
+      return
 
     dataOp = DataOperation()
     dataOp.setStartTime(fromString(ftsJob.submitTime))
     dataOp.setEndTime(fromString(ftsJob.lastUpdate))
-
     dataOp.setValuesFromDict(ftsJob.accountingDict)
     dataOp.delayedCommit()
