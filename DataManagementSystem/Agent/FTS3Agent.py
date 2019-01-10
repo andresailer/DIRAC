@@ -193,8 +193,17 @@ class FTS3Agent(AgentModule):
       res = ftsJob.monitor(context=context)
 
       if not res['OK']:
-        log.error("Error monitoring job", res)
-        return ftsJob, res
+        if res['Message'].startswith('Error getting the job status Not found: %s' % ftsJob.ftsGUID):
+          log.info("Job not found, setting job %s to 'Failed': %s" % (ftsJob.jobID, ftsJob.ftsGUID))
+          # { fileID : { Status, Error } }
+          ftsJob.status = 'Failed'
+          res = self.fts3db.failFileStatusForJob(ftsJob, ftsGUID=ftsJob.ftsGUID)
+        elif 'Not found' not in res['Message']:
+          log.info("'Not found' not found: %r" % res['Message'])
+          return ftsJob, res
+        else:
+          log.error("Error monitoring job", res)
+          return ftsJob, res
 
       # { fileID : { Status, Error } }
       filesStatus = res['Value']
@@ -224,6 +233,7 @@ class FTS3Agent(AgentModule):
       return ftsJob, res
 
     except Exception as e:
+      log.exception('Exception in _monitorJob', repr(e))
       return ftsJob, S_ERROR(0, "Exception %s" % repr(e))
 
   @staticmethod
@@ -537,10 +547,11 @@ class FTS3Agent(AgentModule):
 
         :param ftsJob: the FTS3Job from which we send the accounting info
     """
+    if not hasattr(ftsJob, 'accountingDict'):
+      return
 
     dataOp = DataOperation()
     dataOp.setStartTime(fromString(ftsJob.submitTime))
     dataOp.setEndTime(fromString(ftsJob.lastUpdate))
-
     dataOp.setValuesFromDict(ftsJob.accountingDict)
     dataOp.delayedCommit()
