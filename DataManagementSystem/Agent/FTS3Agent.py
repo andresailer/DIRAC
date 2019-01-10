@@ -16,6 +16,7 @@ It is in charge of submitting and monitoring all the transfers. It can be duplic
 __RCSID__ = "$Id$"
 
 import time
+import traceback
 
 # from threading import current_thread
 from multiprocessing.pool import ThreadPool
@@ -172,7 +173,7 @@ class FTS3Agent(AgentModule):
         * update the FTSFile status
         * update the FTSJob status
     """
-    # General try catch to avoid that the tread dies
+    # General try catch to avoid that the thread dies
     try:
       threadID = current_process().name
       log = gLogger.getSubLogger("_monitorJob/%s" % ftsJob.jobID, child=True)
@@ -188,16 +189,24 @@ class FTS3Agent(AgentModule):
 
       res = ftsJob.monitor(context=context)
 
-      if not res['OK']:
-        log.error("Error monitoring job", res)
-        return ftsJob, res
+      if res['OK']:
+        filesStatus = res['Value']
+        # Specify the job ftsGUID to make sure we do not overwrite
+        # status of files already taken by newer jobs
+        res = self.fts3db.updateFileStatus(filesStatus, ftsGUID=ftsJob.ftsGUID)
+      else:
+        if res['Message'].startswith('Error getting the job status Not found: %s' % ftsJob.ftsGUID):
+          log.info("Job not found, setting job %s to 'Failed': %s" % (ftsJob.jobID, ftsJob.ftsGUID))
+          # { fileID : { Status, Error } }
+          ftsJob.status = 'Failed'
+          res = self.fts3db.failFileStatusForJob(ftsJob, ftsGUID=ftsJob.ftsGUID)
+        elif 'Not found' in res['Message']:
+          log.info("'Not found' not found: %r" % res['Message'])
+          return ftsJob, res
+        else:
+          log.error("Error monitoring job", res)
+          return ftsJob, res
 
-      # { fileID : { Status, Error } }
-      filesStatus = res['Value']
-
-      # Specify the job ftsGUID to make sure we do not overwrite
-      # status of files already taken by newer jobs
-      res = self.fts3db.updateFileStatus(filesStatus, ftsGUID=ftsJob.ftsGUID)
 
       if not res['OK']:
         log.error("Error updating file fts status", "%s, %s" % (ftsJob.ftsGUID, res))
@@ -220,6 +229,7 @@ class FTS3Agent(AgentModule):
       return ftsJob, res
 
     except Exception as e:
+      traceback.print_exc()
       return ftsJob, S_ERROR(0, "Exception %s" % repr(e))
 
   @staticmethod
@@ -533,10 +543,11 @@ class FTS3Agent(AgentModule):
 
         :param ftsJob: the FTS3Job from which we send the accounting info
     """
+    if not hasattr(ftsJob, 'accountingDict'):
+      return
 
     dataOp = DataOperation()
     dataOp.setStartTime(fromString(ftsJob.submitTime))
     dataOp.setEndTime(fromString(ftsJob.lastUpdate))
-
     dataOp.setValuesFromDict(ftsJob.accountingDict)
     dataOp.delayedCommit()
