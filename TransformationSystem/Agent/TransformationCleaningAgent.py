@@ -16,7 +16,9 @@ import re
 import ast
 import os
 import errno
+import time
 from datetime import datetime, timedelta
+from hashlib import md5
 # # from DIRAC
 from DIRAC import S_OK, S_ERROR
 from DIRAC.Core.Base.AgentModule import AgentModule
@@ -30,7 +32,11 @@ from DIRAC.DataManagementSystem.Client.DataManager import DataManager
 from DIRAC.Resources.Catalog.FileCatalogClient import FileCatalogClient
 from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
 from DIRAC.Resources.Storage.StorageElement import StorageElement
+from DIRAC.RequestManagementSystem.Client.File import File
+from DIRAC.RequestManagementSystem.Client.Operation import Operation
+from DIRAC.RequestManagementSystem.Client.Request import Request
 from DIRAC.RequestManagementSystem.Client.ReqClient import ReqClient
+from DIRAC.RequestManagementSystem.private.RequestValidator import RequestValidator
 from DIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 from DIRAC.WorkloadManagementSystem.Client.JobMonitoringClient import JobMonitoringClient
 from DIRAC.WorkloadManagementSystem.Client.WMSClient import WMSClient
@@ -77,6 +83,7 @@ class TransformationCleaningAgent(AgentModule):
     self.logSE = 'LogSE'
     # # enable/disable execution
     self.enableFlag = 'True'
+    self.cleanWithRMS = True
 
     self.dataProcTTypes = ['MCSimulation', 'Merge']
     self.dataManipTTypes = ['Replication', 'Removal']
@@ -115,7 +122,7 @@ class TransformationCleaningAgent(AgentModule):
     # # transformation log SEs
     self.logSE = Operations().getValue('/LogStorage/LogSE', self.logSE)
     self.log.info("Will remove logs found on storage element: %s" % self.logSE)
-
+    self.cleanWithRMS = self.am_getOption('CleanWithRMS', self.cleanWithRMS)
     # # transformation client
     self.transClient = TransformationClient()
     # # wms client
@@ -381,9 +388,12 @@ class TransformationCleaningAgent(AgentModule):
     self.log.info("Attempting to remove %d possible remnants from the catalog and storage" % len(filesFound))
 
     # Executing with shifter proxy
-    gConfigurationData.setOptionInCFG('/DIRAC/Security/UseServerCertificate', 'false')
-    res = DataManager().removeFile(filesFound, force=True)
-    gConfigurationData.setOptionInCFG('/DIRAC/Security/UseServerCertificate', 'true')
+    if self.cleanWithRMS:
+      res = self.__submitRemovalRequests(filesFound, 0)
+    else:
+      gConfigurationData.setOptionInCFG('/DIRAC/Security/UseServerCertificate', 'false')
+      res = DataManager().removeFile(filesFound, force=True)
+      gConfigurationData.setOptionInCFG('/DIRAC/Security/UseServerCertificate', 'true')
 
     if not res['OK']:
       return res
@@ -554,9 +564,12 @@ class TransformationCleaningAgent(AgentModule):
       return S_OK()
 
     # Executing with shifter proxy
-    gConfigurationData.setOptionInCFG('/DIRAC/Security/UseServerCertificate', 'false')
-    res = DataManager().removeFile(fileToRemove, force=True)
-    gConfigurationData.setOptionInCFG('/DIRAC/Security/UseServerCertificate', 'true')
+    if self.cleanWithRMS:
+      res = self.__submitRemovalRequests(fileToRemove, transID)
+    else:
+      gConfigurationData.setOptionInCFG('/DIRAC/Security/UseServerCertificate', 'false')
+      res = DataManager().removeFile(fileToRemove, force=True)
+      gConfigurationData.setOptionInCFG('/DIRAC/Security/UseServerCertificate', 'true')
 
     if not res['OK']:
       return res
@@ -685,4 +698,49 @@ class TransformationCleaningAgent(AgentModule):
       self.log.info("Failed to remove %s requests" % failed)
       return S_ERROR("Failed to remove all the request from RequestDB")
     self.log.info("Successfully removed all the associated failover requests")
+    return S_OK()
+
+  def __submitRemovalRequests(self, lfns, transID=0):
+    """Create removal requests for given lfns.
+
+    :param list lfns: list of lfns to be removed
+    :param int transID: transformationID, only used in RequestName
+    """
+    for index, lfnList in enumerate(breakListIntoChunks(lfns, 300)):
+      oRequest = Request()
+      requestName = 'TCA_%s_%s_%s' % (transID, index, md5(repr(time.time())).hexdigest()[:5])
+      oRequest.RequestName = requestName
+      oOperation = Operation()
+      oOperation.Type = 'RemoveFile'
+      oOperation.TargetSE = 'All'
+      resMeta = self.metadataClient.getFileMetadata(lfnList)
+      if not resMeta['OK']:
+        self.log.error('Cannot get file metadata', resMeta['Message'])
+        return resMeta
+      if resMeta['Value']['Failed']:
+        self.log.warning('Could not get the file metadata of the following, so skipping them:',
+                         resMeta['Value']['Failed'])
+
+      for lfn, lfnInfo in resMeta['Value']['Successful'].items():
+        rarFile = File()
+        rarFile.LFN = lfn
+        rarFile.ChecksumType = 'ADLER32'
+        rarFile.Size = lfnInfo['Size']
+        rarFile.Checksum = lfnInfo['Checksum']
+        rarFile.GUID = lfnInfo['GUID']
+        oOperation.addFile(rarFile)
+
+      oRequest.addOperation(oOperation)
+      isValid = RequestValidator().validate(oRequest)
+      if not isValid['OK']:
+        self.log.error('Request is not valid:', isValid['Message'])
+        return isValid
+      result = self.reqClient.putRequest(oRequest)
+      if not result['OK']:
+        self.log.error('Failed to submit Request: ', result['Message'])
+        return result
+      self.log.info('RemoveFiles request %d submitted for %d LFNs' %
+                    (result['Value'], len(resMeta['Value']['Successful'])))
+
+    # after the for loop
     return S_OK()
