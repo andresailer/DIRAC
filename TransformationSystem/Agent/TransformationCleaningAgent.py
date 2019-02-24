@@ -358,7 +358,7 @@ class TransformationCleaningAgent(AgentModule):
 
     # Executing with shifter proxy
     if self.cleanWithRMS:
-      res = self.__submitRemovalRequests(0, filesFound)
+      res = self.__submitRemovalRequests(filesFound, 0)
     else:
       gConfigurationData.setOptionInCFG('/DIRAC/Security/UseServerCertificate', 'false')
       res = DataManager().removeFile(filesFound, force=True)
@@ -534,7 +534,7 @@ class TransformationCleaningAgent(AgentModule):
 
     # Executing with shifter proxy
     if self.cleanWithRMS:
-      res = self.__submitRemovalRequests(transID, fileToRemove)
+      res = self.__submitRemovalRequests(fileToRemove, transID)
     else:
       gConfigurationData.setOptionInCFG('/DIRAC/Security/UseServerCertificate', 'false')
       res = DataManager().removeFile(fileToRemove, force=True)
@@ -671,31 +671,34 @@ class TransformationCleaningAgent(AgentModule):
     self.log.info("Successfully removed all the associated failover requests")
     return S_OK()
 
-  def __submitRemovalRequests(self, tID, lfns):
-    """Create removal requests for all files."""
+  def __submitRemovalRequests(self, lfns, transID=0):
+    """Create removal requests for given lfns.
+
+    :param list lfns: list of lfns to be removed
+    :param int transID: transformationID, only used in RequestName
+    """
     for index, lfnList in enumerate(breakListIntoChunks(lfns, 300)):
       oRequest = Request()
-      requestName = "TCA_%s_%s_%s" % (tID, index, md5(repr(time.time())).hexdigest()[:5])
+      requestName = 'TCA_%s_%s_%s' % (transID, index, md5(repr(time.time())).hexdigest()[:5])
       oRequest.RequestName = requestName
       oOperation = Operation()
       oOperation.Type = 'RemoveFile'
       oOperation.TargetSE = 'All'
-      res = self.metadataClient.getFileMetadata(lfnList)
-      if not res['OK']:
-        self.log.error('Cannot get file metadata', res['Message'])
-        return res
-      if res['Value']['Failed']:
+      resMeta = self.metadataClient.getFileMetadata(lfnList)
+      if not resMeta['OK']:
+        self.log.error('Cannot get file metadata', resMeta['Message'])
+        return resMeta
+      if resMeta['Value']['Failed']:
         self.log.warning('Could not get the file metadata of the following, so skipping them:',
-                         res['Value']['Failed'])
-      lfnMetadata = res['Value']['Successful']
+                         resMeta['Value']['Failed'])
 
-      for lfn in lfnMetadata:
+      for lfn, lfnInfo in resMeta['Value']['Successful'].items():
         rarFile = File()
         rarFile.LFN = lfn
-        rarFile.Size = lfnMetadata[lfn]['Size']
-        rarFile.Checksum = lfnMetadata[lfn]['Checksum']
-        rarFile.GUID = lfnMetadata[lfn]['GUID']
         rarFile.ChecksumType = 'ADLER32'
+        rarFile.Size = lfnInfo['Size']
+        rarFile.Checksum = lfnInfo['Checksum']
+        rarFile.GUID = lfnInfo['GUID']
         oOperation.addFile(rarFile)
 
       oRequest.addOperation(oOperation)
@@ -704,11 +707,11 @@ class TransformationCleaningAgent(AgentModule):
         self.log.error('Request is not valid:', isValid['Message'])
         return isValid
       result = self.reqClient.putRequest(oRequest)
-      if result['OK']:
-        self.log.info('RemoveFiles request %d submitted for %d LFNs' %
-                      (result['Value'], len(lfnMetadata)))
-      else:
-        self.log.error('Failed to submit Request:', result['Message'])
+      if not result['OK']:
+        self.log.error('Failed to submit Request: ', result['Message'])
         return result
+      self.log.info('RemoveFiles request %d submitted for %d LFNs' %
+                    (result['Value'], len(resMeta['Value']['Successful'])))
 
+    # after the for loop
     return S_OK()
