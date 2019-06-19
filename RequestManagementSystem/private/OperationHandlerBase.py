@@ -101,7 +101,6 @@ class OperationHandlerBase(object):
     for option, value in csOptionsDict.iteritems():
       # # hack to set proper types
       try:
-        print "Parsing %r: %r" % (option, value)
         if value:
           value = eval(value)
       except NameError:
