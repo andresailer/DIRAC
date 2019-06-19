@@ -274,7 +274,7 @@ class RequestHandler(object):
         self.__lockManager.unlock("RPC/%s" % method)
         self.__msgBroker.removeTransport(self.__trid, closeTransport=False)
     except Exception as e:
-      gLogger.exception("Uncaught exception when serving RPC", "Function %s" % method, lException=e)
+      gLogger.exception("Uncaught exception when serving RPC", "Function %s; Args %r " % (method, args), lException=e)
       return S_ERROR("Server error while serving %s: %s" % (method, str(e)))
 
   def __checkExpectedArgumentTypes(self, method, args):
