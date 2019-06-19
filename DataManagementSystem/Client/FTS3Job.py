@@ -631,7 +631,7 @@ class FTS3Job(JSerializable):
     setFileIdsInTheJob = set(fileIDsInTheJob)
 
     try:
-      self.ftsGUID = fts3.submit(context, job)
+      self.ftsGUID = fts3.submit(context, job, force_delegation=True)
       log.info("Got GUID %s" % self.ftsGUID)
 
       # Only increase the amount of attempt
