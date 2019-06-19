@@ -610,7 +610,7 @@ class AccountingDB( DB ):
     """
     if self.__readOnly:
       return S_ERROR( "ReadOnly mode enabled. No modification allowed" )
-    self.log.info( "Adding record to queue", "for type %s\n [%s -> %s]" % ( typeName, Time.fromEpoch( startTime ), Time.fromEpoch( endTime ) ) )
+    self.log.info( "Adding record to queue", "for type %s: [%s -> %s]" % ( typeName, Time.fromEpoch( startTime ), Time.fromEpoch( endTime ) ) )
     if not typeName in self.dbCatalog:
       return S_ERROR( "Type %s has not been defined in the db" % typeName )
     result = self.__insertInQueueTable( typeName, startTime, endTime, valuesList )
@@ -645,7 +645,7 @@ class AccountingDB( DB ):
       return S_ERROR( "ReadOnly mode enabled. No modification allowed" )
     gMonitor.addMark( "registeradded", 1 )
     gMonitor.addMark( "registeradded:%s" % typeName, 1 )
-    self.log.info( "Adding record", "for type %s\n [%s -> %s]" % ( typeName, Time.fromEpoch( startTime ), Time.fromEpoch( endTime ) ) )
+    self.log.info( "Adding record", "for type %s: [%s -> %s]" % ( typeName, Time.fromEpoch( startTime ), Time.fromEpoch( endTime ) ) )
     if not typeName in self.dbCatalog:
       return S_ERROR( "Type %s has not been defined in the db" % typeName )
     #Discover key indexes
@@ -692,7 +692,7 @@ class AccountingDB( DB ):
     """
     if self.__readOnly:
       return S_ERROR( "ReadOnly mode enabled. No modification allowed" )
-    self.log.info( "Deleting record record", "for type %s\n [%s -> %s]" % ( typeName, Time.fromEpoch( startTime ), Time.fromEpoch( endTime ) ) )
+    self.log.info( "Deleting record record", "for type %s [%s -> %s]" % ( typeName, Time.fromEpoch( startTime ), Time.fromEpoch( endTime ) ) )
     if not typeName in self.dbCatalog:
       return S_ERROR( "Type %s has not been defined in the db" % typeName )
     sqlValues = []
