@@ -35,7 +35,7 @@ class DataStoreClient(Client):
     super(DataStoreClient, self).__init__(**kwargs)
     self.setServer('Accounting/DataStore')
 
-    self.__maxRecordsInABundle = 5000
+    self.__maxRecordsInABundle = 1000
     self.__registersList = []
     self.__maxTimeRetrying = retryGraceTime
     self.__lastSuccessfulCommit = time.time()
@@ -93,6 +93,7 @@ class DataStoreClient(Client):
         retVal = rpcClient.commitRegisters(registersToSend)
         if retVal['OK']:
           self.__lastSuccessfulCommit = time.time()
+          gLogger.info("Committed %d of %d registers" % (len(registersToSend), len(registersList)))
         else:
           gLogger.warn('Error sending accounting record', retVal['Message'])
           if self.__failoverEnabled and time.time() - self.__lastSuccessfulCommit > self.__maxTimeRetrying:

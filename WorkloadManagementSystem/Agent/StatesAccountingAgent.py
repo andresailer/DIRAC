@@ -77,7 +77,7 @@ class StatesAccountingAgent(AgentModule):
       values = result['Value'][1]
 
       if self.retryOnce:
-        self.log.verbose("Adding to records to commit those not committed within the previous cycle")
+        self.log.info("Adding to records to commit those not committed within the previous cycle")
       acWMSListAdded = []
 
       for record in values:
