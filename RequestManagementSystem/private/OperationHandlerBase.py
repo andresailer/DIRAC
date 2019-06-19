@@ -101,7 +101,8 @@ class OperationHandlerBase(object):
     for option, value in csOptionsDict.iteritems():
       # # hack to set proper types
       try:
-        value = eval(value)
+        if value:
+          value = eval(value)
       except NameError:
         pass
       self.makeProperty(option, value, True)  # pylint: disable=no-member
