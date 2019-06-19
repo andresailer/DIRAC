@@ -449,9 +449,18 @@ class FTS3TransferOperation(FTS3Operation):
       return res
     status = res['Value']
 
+    # check also the status if the request via the request, because that can be different...
+    resRequest = self.reqClient.getRequest(self.rmsReqID)
+    if resRequest['OK']:
+      log.info('Request Status is: %s' % resRequest['Value'].Status)
+      reqStatus = resRequest['Value'].Status
+    else:
+      log.info('Cannot get request Status is: %s' % resRequest['Message'])
+      reqStatus = 'Unknown'
+
     # If it is not scheduled, something went wrong
     # and we will not modify it
-    if status != 'Scheduled':
+    if not (status == 'Scheduled' or reqStatus == 'Scheduled'):
       # If the Request is in a final state, just leave it,
       # and we consider our job done.
       # (typically happens when the callback had already been done but not persisted to the FTS3DB)
