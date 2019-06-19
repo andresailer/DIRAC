@@ -36,7 +36,7 @@ class DataStoreClient(Client):
     super(DataStoreClient, self).__init__(**kwargs)
     self.setServer('Accounting/DataStore')
 
-    self.__maxRecordsInABundle = 5000
+    self.__maxRecordsInABundle = 1000
     self.__registersList = []
     self.__maxTimeRetrying = retryGraceTime
     self.__lastSuccessfulCommit = time.time()
