@@ -614,8 +614,7 @@ class AccountingDB(DB):
     if self.__readOnly:
       return S_ERROR("ReadOnly mode enabled. No modification allowed")
     self.log.info(
-        "Adding record to queue",
-        "for type %s\n [%s -> %s]" %
+        "Adding record to queue", "for type %s [%s -> %s]" %
         (typeName,
          Time.fromEpoch(startTime),
          Time.fromEpoch(endTime)))
@@ -652,7 +651,7 @@ class AccountingDB(DB):
       return S_ERROR("ReadOnly mode enabled. No modification allowed")
     gMonitor.addMark("registeradded", 1)
     gMonitor.addMark("registeradded:%s" % typeName, 1)
-    self.log.info("Adding record", "for type %s\n [%s -> %s]" %
+    self.log.info("Adding record", "for type %s [%s -> %s]" %
                   (typeName, Time.fromEpoch(startTime), Time.fromEpoch(endTime)))
     if typeName not in self.dbCatalog:
       return S_ERROR("Type %s has not been defined in the db" % typeName)
@@ -702,7 +701,7 @@ class AccountingDB(DB):
       return S_ERROR("ReadOnly mode enabled. No modification allowed")
     self.log.info(
         "Deleting record record",
-        "for type %s\n [%s -> %s]" %
+        "for type %s [%s -> %s]" %
         (typeName,
          Time.fromEpoch(startTime),
          Time.fromEpoch(endTime)))
