@@ -136,7 +136,7 @@ class FTS3Agent(AgentModule):
     idTuple = (username, group, ftsServer)
     log.debug("Getting context for %s" % (idTuple, ))
 
-    if not contextes.exists(idTuple, 2700):
+    if not contextes.exists(idTuple, 300):
       res = getDNForUsername(username)
       if not res['OK']:
         return res
@@ -149,7 +149,7 @@ class FTS3Agent(AgentModule):
       # It has to have a lifetime of at least 2 hours
       # and we cache it for 1.5 hours
       res = gProxyManager.downloadVOMSProxyToFile(
-          userDN, group, requiredTimeLeft=7200, cacheTime=5400)
+          userDN, group, requiredTimeLeft=7200, cacheTime=3600)
       if not res['OK']:
         return res
 
@@ -162,8 +162,8 @@ class FTS3Agent(AgentModule):
         return res
       context = res['Value']
 
-      # we add it to the cache for this thread for 1h
-      contextes.add(idTuple, 3600, context)
+      # we add it to the cache for this thread for 30mn
+      contextes.add(idTuple, 1800, context)
 
     return S_OK(contextes.get(idTuple))
 
