@@ -134,6 +134,11 @@ class FTS3Job(JSerializable):
       return S_ERROR(errno.ESRCH, "FTSGUID %s not found on %s" % (self.ftsGUID, self.ftsServer))
     except FTS3ClientException as e:
       return S_ERROR("Error getting the job status %s" % e)
+    except BaseException as e:
+      log = gLogger.getSubLogger(__name__ + ".monitor")
+      log.exception('Exception when trying to get jobStatus', lException=e)
+      log.error('Error for FTS Job', '%s' % self.ftsGUID)
+      return S_ERROR("Error getting the job status %r" % e)
 
     now = datetime.datetime.utcnow().replace(microsecond=0)
     self.lastMonitor = now
