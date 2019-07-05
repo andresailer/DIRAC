@@ -15,6 +15,8 @@ from DIRAC.Core.Utilities import Time
 
 __RCSID__ = "$Id$"
 
+gLogger = gLogger.getSubLogger(__name__)
+
 
 def getServiceOption(serviceInfo, optionName, defaultValue):
   """ Get service option resolving default values from the master service

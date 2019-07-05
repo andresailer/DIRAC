@@ -987,3 +987,39 @@ class LaunchAgent(CommandBase):
     self.__startJobAgent()
 
     sys.exit(0)
+
+
+class ReplaceILCDIRACCode(CommandBase):
+  """ This command will replace ILCDIRAC code with the one taken ILCDIRAC.tar.gz.
+  """
+
+  def __init__(self, pilotParams):
+    """Constructor."""
+    super(ReplaceILCDIRACCode, self).__init__(pilotParams)
+
+  def execute(self):
+    """Untar an archive file."""
+    import os
+    import shutil
+    from io import BytesIO
+    from tarfile import TarFile
+    from urllib2 import urlopen
+
+    self.log.info('Moving Existing ILCDIRAC')
+    for name in os.listdir(os.getcwd()):
+      self.log.info(name)
+    shutil.move('ILCDIRAC', 'ILCDIRAC_BAK')
+    TARBALL_URL = 'http://cern.ch/test-pandora-calibration/ILCDIRAC.tar.gz'
+    # TARBALL_URL='http://sailer.web.cern.ch/sailer/ILCDIRAC.tar.gz'
+    self.log.info('Extracting TarBall from %r' % TARBALL_URL)
+    # python 2.6 compatible, context manager only in python 2.7
+    tarResp = BytesIO(urlopen(TARBALL_URL).read())
+    tf = TarFile.open(fileobj=tarResp, mode='r|*')
+    tf.extractall()
+    tf.close()
+    tarResp.close()
+    # tf = TarFile.open('ILCDIRAC.tar.gz', 'r|*')
+    # tf.extractall()
+    # tf.close()
+    self.log.info('Done extracting')
+    return

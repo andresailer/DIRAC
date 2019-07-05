@@ -391,7 +391,7 @@ class GFAL2_StorageBase(StorageBase):
     urls = res['Value']
 
     self.log.debug("GFAL2_StorageBase.getFile: Trying to download %s files." % len(urls))
-
+    self.log.error("GFAL2_StorageBase XrdSec", os.environ.get('XrdSecPROTOCOL', 'No Protocol'))
     failed = {}
     successful = {}
 

@@ -52,7 +52,9 @@ DIRAC_INSTALL = os.path.join(DIRAC.rootPath, 'DIRAC', 'Core', 'scripts', 'dirac-
 # pilot2 python files (NOT needed for pilot 3)
 DIRAC_PILOT = os.path.join(DIRAC.rootPath, 'DIRAC', 'WorkloadManagementSystem', 'PilotAgent', 'dirac-pilot.py')
 DIRAC_MODULES = [os.path.join(DIRAC.rootPath, 'DIRAC', 'WorkloadManagementSystem', 'PilotAgent', 'pilotCommands.py'),
-                 os.path.join(DIRAC.rootPath, 'DIRAC', 'WorkloadManagementSystem', 'PilotAgent', 'pilotTools.py')]
+                 os.path.join(DIRAC.rootPath, 'DIRAC', 'WorkloadManagementSystem', 'PilotAgent', 'pilotTools.py'),
+                 os.path.join(DIRAC.rootPath, 'DIRAC', 'WorkloadManagementSystem', 'PilotAgent', 'ILCDIRAC.tar.gz'),
+                 ]
 
 # status
 TRANSIENT_PILOT_STATUS = ['Submitted', 'Waiting', 'Running', 'Scheduled', 'Ready', 'Unknown']

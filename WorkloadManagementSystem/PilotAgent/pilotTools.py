@@ -354,7 +354,9 @@ class PilotParams(object):
     self.debugFlag = False
     self.local = False
     self.commandExtensions = []
-    self.commands = ['GetPilotVersion', 'CheckWorkerNode', 'InstallDIRAC', 'ConfigureBasics', 'CheckCECapabilities',
+    self.commands = ['GetPilotVersion', 'CheckWorkerNode', 'InstallDIRAC',
+                     'ReplaceILCDIRACCode',
+                     'ConfigureBasics', 'CheckCECapabilities',
                      'CheckWNCapabilities', 'ConfigureSite', 'ConfigureArchitecture', 'ConfigureCPURequirements',
                      'LaunchAgent']
     self.extensions = []
@@ -376,7 +378,7 @@ class PilotParams(object):
     self.userDN = ""
     self.maxCycles = self.MAX_CYCLES
     self.flavour = 'DIRAC'
-    self.gridVersion = ''
+    self.gridVersion = 'v14r2'
     self.pilotReference = ''
     self.releaseVersion = ''
     self.releaseProject = ''
