@@ -135,7 +135,7 @@ class OperationHandlerBase(object):
       raise TypeError("expecting Operation instance")
     self.operation = operation
     self.request = operation._parent
-    self.log = gLogger.getSubLogger("pid_%s/%s/%s/%s" % (os.getpid(), self.request.RequestName,
+    self.log = gLogger.getSubLogger("pid_%s/%s/%s/%s" % (os.getpid(), self.request.RequestID,
                                                          self.request.Order,
                                                          self.operation.Type))
 
