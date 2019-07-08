@@ -123,6 +123,23 @@ class CleanReqDBAgent(AgentModule):
           else:
             self.log.verbose("Kicked request %d" % putRequest['Value'])
           kicked += 1
+      #   else:
+      #     self.log.info('Not kicking request: %s' % requestID)
+      #     if getRequest.LastUpdate > kickTime:
+      #       self.log.info("Running notify: %s" % getRequest._Status)
+      #       getRequest._notify()
+      #       putRequest = self.requestClient().putRequest( getRequest )
+      #       if not putRequest["OK"]:
+      #         self.log.error( "execute: unable to put request (%s/'%s'): %s" % ( requestID,
+      #                                                                            getRequest.RequestName,
+      #                                                                            putRequest["Message"] ) )
+      #       else:
+      #         self.log.info("Updated Requestsshould")
+      # else: # not old, or status not assigned
+      #   self.log.info('Status is %s, should kick? %s' %(status, lastUpdate < kickTime, ))
+      #   if status in ('Done', 'Failed'):
+      #     self.log.info('Seems like request has fixed itself and should be put back: %s' % requestID)
+
 
     # # delete
     statusList = ["Done", "Failed", "Canceled"] if self.DEL_FAILED else ["Done"]
