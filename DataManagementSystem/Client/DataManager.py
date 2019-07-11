@@ -572,7 +572,7 @@ class DataManager(object):
         oDataOperation.setValueByKey('FinalStatus', 'Failed')
         oDataOperation.setEndTime()
         gDataStoreClient.addRegister(oDataOperation)
-        gDataStoreClient.commit()
+        gDataStoreClient.delayedCommit()
         startTime = time.time()
         log.debug('putAndRegister: Sending accounting took %.1f seconds' %
                   (time.time() - startTime))
@@ -616,7 +616,7 @@ class DataManager(object):
     oDataOperation.setEndTime()
     gDataStoreClient.addRegister(oDataOperation)
     startTime = time.time()
-    gDataStoreClient.commit()
+    gDataStoreClient.delayedCommit()
     log.debug('Sending accounting took %.1f seconds' %
               (time.time() - startTime))
     return S_OK({'Successful': successful, 'Failed': failed})
@@ -1217,7 +1217,7 @@ class DataManager(object):
         failed.update(res['Value']['Failed'])
         successful.update(res['Value']['Successful'])
 
-    gDataStoreClient.commit()
+    gDataStoreClient.delayedCommit()
     return S_OK({'Successful': successful, 'Failed': failed})
 
   def __removeFile(self, lfnDict):
@@ -1316,7 +1316,7 @@ class DataManager(object):
           return res
         failed.update(res['Value']['Failed'])
         successful.update(res['Value']['Successful'])
-        gDataStoreClient.commit()
+        gDataStoreClient.delayedCommit()
     return S_OK({'Successful': successful, 'Failed': failed})
 
   def __removeReplica(self, storageElementName, lfns, replicaDict=None):
