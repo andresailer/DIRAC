@@ -1303,7 +1303,7 @@ class StorageElementItem(object):
                 failed.pop(lfn)
               lfnDict.pop(lfn)
 
-    gDataStoreClient.commit()
+    gDataStoreClient.delayedCommit()
 
     return S_OK({'Failed': failed, 'Successful': successful})
 

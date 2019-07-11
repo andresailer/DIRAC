@@ -94,6 +94,7 @@ class DataStoreClient(Client):
         retVal = rpcClient.commitRegisters(registersToSend)
         if retVal['OK']:
           self.__lastSuccessfulCommit = time.time()
+          gLogger.debug("Committed %d of %d registers" % (len(registersToSend), len(registersList)))
         else:
           if self.__failoverEnabled and time.time() - self.__lastSuccessfulCommit > self.__maxTimeRetrying:
             gLogger.warn('Error sending accounting record', retVal['Message'])
