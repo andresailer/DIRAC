@@ -108,7 +108,7 @@ class RemoveFile( DMSRequestOperationsBase ):
     if toRemoveDict:
       gMonitor.addMark( "RemoveFileAtt", len( toRemoveDict ) )
         # # 1st step - bulk removal
-      self.log.debug( "bulk removal of %s files" % len( toRemoveDict ) )
+      self.log.info("bulk removal of %s files" % len(toRemoveDict))
       bulkRemoval = self.bulkRemoval( toRemoveDict )
       if not bulkRemoval["OK"]:
         self.log.error( "Bulk file removal failed", bulkRemoval["Message"] )
