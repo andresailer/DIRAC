@@ -103,6 +103,8 @@ class MCExtensionAgent( AgentModule ):
     if waiting > self.maxWaitingJobs:
       return 0
     numberOfTasks = maxTasks - ( total - failed )
+    if numberOfTasks <= 0:
+      return 0
     if numberOfTasks > self.maxIterationTasks:
       numberOfTasks = self.maxIterationTasks
     return numberOfTasks
