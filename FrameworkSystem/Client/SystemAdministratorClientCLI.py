@@ -1033,7 +1033,7 @@ class SystemAdministratorClientCLI( CLI ):
 
         usage:
 
-          update <version> [ -r <rootPath> ] [ -g <lcgVersion> ]
+          update <version> [ -r <rootPath> ] [ -g <lcgVersion> ] [-d <dirac-os-version> ]
 
               where rootPath - path to the DIRAC installation
                     lcgVersion - version of the LCG bindings to install
@@ -1043,6 +1043,7 @@ class SystemAdministratorClientCLI( CLI ):
       version = argss[0]
       rootPath = ''
       lcgVersion = ''
+      isDOS = False
       del argss[0]
 
       while len( argss ) > 0:
@@ -1054,6 +1055,11 @@ class SystemAdministratorClientCLI( CLI ):
           lcgVersion = argss[1]
           del argss[0]
           del argss[0]
+        elif argss[0] == '-d':
+          isDOS = True
+          lcgVersion = argss[1]
+          del argss[0]
+          del argss[0]
     except Exception as x:
       gLogger.notice( "ERROR: wrong input:", str( x ) )
       gLogger.notice( self.do_update.__doc__ )
@@ -1061,7 +1067,7 @@ class SystemAdministratorClientCLI( CLI ):
 
     client = SystemAdministratorClient( self.host, self.port )
     gLogger.notice( "Software update can take a while, please wait ..." )
-    result = client.updateSoftware( version, rootPath, lcgVersion, timeout = 300 )
+    result = client.updateSoftware(version, rootPath, lcgVersion, isDOS, timeout=300)
     if not result['OK']:
       self._errMsg( "Failed to update the software" )
       gLogger.notice( result['Message'] )

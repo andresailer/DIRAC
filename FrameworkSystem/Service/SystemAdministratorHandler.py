@@ -294,8 +294,13 @@ class SystemAdministratorHandler(RequestHandler):
 #
   types_updateSoftware = [basestring]
 
-  def export_updateSoftware(self, version, rootPath="", gridVersion=""):
+  def export_updateSoftware(self, version, rootPath="", gridVersion="", isDOS=False):
     """ Update the local DIRAC software installation to version
+
+    :param str version: the version to use for the update
+    :param str rootPath: where to install the update
+    :param str gridVersion: the version of the LCG Bundles or DIRAC OS
+    :param bool isDOS: if True install dirac OS instead of LCGBundles
     """
 
     # Check that we have a sane local configuration
@@ -340,8 +345,10 @@ class SystemAdministratorHandler(RequestHandler):
       cmdList += ['-l', project]
 
     # Are grid middleware bindings required ?
-    if gridVersion:
+    if gridVersion and not isDOS:
       cmdList.extend(['-g', gridVersion])
+    if gridVersion and isDOS:
+      cmdList.extend(['--dirac-os', '--dirac-os-version', gridVersion])
 
     targetPath = gConfig.getValue('/LocalInstallation/TargetPath',
                                   gConfig.getValue('/LocalInstallation/RootPath', ''))
