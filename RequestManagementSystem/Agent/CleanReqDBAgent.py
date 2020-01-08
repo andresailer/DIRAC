@@ -158,6 +158,8 @@ class CleanReqDBAgent(AgentModule):
           self.log.error("execute: unable to delete request '%s': %s" % (requestID, delRequest["Message"]))
           continue
         deleted += 1
+        
+    #self.kickScheduled()
 
     gMonitor.addMark("KickedRequests", kicked)
     gMonitor.addMark("DeletedRequests", deleted)
