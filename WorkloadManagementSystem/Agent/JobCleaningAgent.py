@@ -117,6 +117,11 @@ class JobCleaningAgent(AgentModule):
     result = self.removeJobsByStatus({'Status': 'Deleted'})
     if not result['OK']:
       return result
+
+    for status, delay in self.removeStatusDelay.items():
+      if delay > 0:
+        self.removeHeartBeatLoggingInfo(status, delay)
+
     # Get all the Job types that can be cleaned
     result = self._getAllowedJobTypes()
     if not result['OK']:
@@ -284,3 +289,15 @@ class JobCleaningAgent(AgentModule):
     oRequest.addOperation(removeFile)
 
     return ReqClient().putRequest(oRequest)
+
+  def removeHeartBeatLoggingInfo(self, status, delayDays):
+    """ Remove deleted jobs
+    """
+    gLogger.info("Removing HeartBeatLoggingInfo for Jobs with %s and older than %s day(s)" % (status, delayDays))
+    delTime = str(Time.dateTime() - delayDays * Time.day)
+    result = self.jobDB.removeInfoFromHeartBeatLogging(status, delTime, 40*self.maxJobsAtOnce)
+    if not result['OK']:
+      gLogger.error('Failed to delete from HeartBeatLoggingInfo')
+    else:
+      gLogger.info('Deleted HeartBeatLogging info')
+    return S_OK()

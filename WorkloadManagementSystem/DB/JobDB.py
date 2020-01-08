@@ -2134,3 +2134,21 @@ class JobDB(DB):
 
     return S_OK(((defFields + valueFields), totalResult))
 
+  def removeInfoFromHeartBeatLogging(self, status, delTime, maxLines):
+    """Remove HeartBeatLoggingInfo from DB."""
+    self.log.verbose("Removing HeartBeatLogginInfo for %r %r %r " %(status, delTime, maxLines))
+    cmd = """DELETE h FROM HeartBeatLoggingInfo AS h
+             JOIN (SELECT hi.JobID FROM HeartBeatLoggingInfo AS hi
+                LEFT JOIN Jobs j on j.JobID = hi.JobID
+                WHERE j.Status ='%(status)s'
+                    AND
+                   LastUpdateTime < '%(delay)s'
+                LIMIT %(maxJobs)s) h2
+              ON h2.JobID = h.JobID""" % {'maxJobs': maxLines,
+                                          'status': status,
+                                          'delay': delTime,
+                                          }
+    result = self._update(cmd)
+    self.log.info('Removed from HBLI: %r' % result)
+    return result
+
