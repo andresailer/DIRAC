@@ -617,7 +617,7 @@ class JobDB(DB):
     """
 
     if attrName not in self.jobAttributeNames:
-      return S_ERROR(EWMSSUBM, 'Request to set non-existing job attribute')
+      return S_ERROR(EWMSSUBM, 'Request to set non-existing job attribute: %r' % attrName)
 
     ret = self._escapeString(jobID)
     if not ret['OK']:
