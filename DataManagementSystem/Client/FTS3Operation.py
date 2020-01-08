@@ -442,10 +442,10 @@ class FTS3TransferOperation(FTS3Operation):
     # in principle, it should be scheduled
     res = self.reqClient.getRequestStatus(self.rmsReqID)
     if not res['OK']:
-      log.error("Could not get request status", res)
       if "Request %s does not exist" % self.rmsReqID in res['Message']:
         log.info("Request with id %s does not exist (any more)" % self.rmsReqID)
         return S_OK('Done')
+      log.error("Could not get request status", res)
       return res
     status = res['Value']
 
@@ -458,6 +458,9 @@ class FTS3TransferOperation(FTS3Operation):
       log.info('Cannot get request Status is: %s' % resRequest['Message'])
       reqStatus = 'Unknown'
 
+    # if status == 'Assigned':
+    #   log.info('Request %s is waiting/assigned, we need to bail' % self.rmsReqID)
+    #   return S_OK('Done')
     # If it is not scheduled, something went wrong
     # and we will not modify it
     if not (status == 'Scheduled' or reqStatus == 'Scheduled'):
