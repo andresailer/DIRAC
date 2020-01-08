@@ -263,7 +263,7 @@ class Subprocess:
   def killChild(self, recursive=True):
     """ kill child process
 
-    :param boolean recursive: flag to kill all descendants
+    :param bool recursive: flag to kill all descendants
     """
     if self.childPID < 1:
       self.log.error("Could not kill child", "Child PID is %s" % self.childPID)

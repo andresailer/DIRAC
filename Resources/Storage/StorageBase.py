@@ -303,7 +303,7 @@ class StorageBase(object):
 
     :param self: self reference
     :param string path: input file LFN or URL
-    :returns boolean: True if URL, False otherwise
+    :returns bool: True if URL, False otherwise
     """
     if self.basePath and path.startswith(self.basePath):
       return S_OK(True)
@@ -351,7 +351,7 @@ class StorageBase(object):
     primary protocol of the storage plagin
 
     :param str lfn: file LFN
-    :param boolean withWSUrl: flag to include the web service part into the resulting URL
+    :param bool withWSUrl: flag to include the web service part into the resulting URL
     :return result: result['Value'] - resulting URL
     """
 

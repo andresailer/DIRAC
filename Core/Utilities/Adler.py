@@ -34,7 +34,7 @@ def hexAdlerToInt(hexAdler, pos=True):
   """Change hex base to decimal for adler32 checksum.
 
   :param mixed hexAdler: hex based adler32 checksum integer or a string
-  :param boolean pos: flag to determine sign (default True = positive)
+  :param bool pos: flag to determine sign (default True = positive)
   """
   if isinstance(hexAdler, (int, long)):
     return hexAdler & 0xffffffff

@@ -282,7 +282,7 @@ class FileCatalogDB(DB):
 
         :param dict paths: dictionary < lfn : owner >
         :param dict credDict: dictionary of the caller credentials
-        :param boolean recursive: flag to apply the operation recursively
+        :param bool recursive: flag to apply the operation recursively
     """
     res = self._checkPathPermissions('changePathOwner', paths, credDict)
     if not res['OK']:
@@ -303,7 +303,7 @@ class FileCatalogDB(DB):
 
         :param dict paths: dictionary < lfn : group >
         :param dict credDict: dictionary of the caller credentials
-        :param boolean recursive: flag to apply the operation recursively
+        :param bool recursive: flag to apply the operation recursively
     """
     res = self._checkPathPermissions('changePathGroup', paths, credDict)
     if not res['OK']:
@@ -324,7 +324,7 @@ class FileCatalogDB(DB):
 
         :param dict paths: dictionary < lfn : mode >
         :param dict credDict: dictionary of the caller credentials
-        :param boolean recursive: flag to apply the operation recursively
+        :param bool recursive: flag to apply the operation recursively
     """
 
     res = self._checkPathPermissions('changePathMode', paths, credDict)
@@ -351,7 +351,7 @@ class FileCatalogDB(DB):
         :param dict credDict: dictionary of the caller credentials
         :param function change_function_directory: function to change directory parameters
         :param function change_function_file: function to change file parameters
-        :param boolean recursive: flag to apply the operation recursively
+        :param bool recursive: flag to apply the operation recursively
     """
     dirList = []
     result = self.isDirectory(paths, credDict)

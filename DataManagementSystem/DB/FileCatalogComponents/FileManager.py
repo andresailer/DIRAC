@@ -198,7 +198,7 @@ class FileManager(FileManagerBase):
     """ Get a list of IDs for all the files stored in given directories or their
         subdirectories
     :param mixt dirID: single directory ID or a list of directory IDs
-    :param boolean requestString: if True return result as a SQL SELECT string
+    :param bool requestString: if True return result as a SQL SELECT string
     :return: list of file IDs or SELECT string
     """
 
