@@ -69,7 +69,9 @@ class StatesAccountingAgent(AgentModule):
     validSetups = result['Value']
     self.log.info("Valid setups for this cycle are %s" % ", ".join(validSetups))
     # Get the WMS Snapshot!
+    self.log.info('Getting the Summary from the DB...')
     result = self.jobDB.getSummarySnapshot(self.__jobDBFields)
+    self.log.info('...Done')
     now = Time.dateTime()
     if not result['OK']:
       self.log.error("Can't get the JobDB summary", "%s: won't commit at this cycle" % result['Message'])

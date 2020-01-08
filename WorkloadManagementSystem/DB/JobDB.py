@@ -2114,8 +2114,23 @@ class JobDB(DB):
     valueFields = ['COUNT(JobID)', 'SUM(RescheduleCounter)']
     defString = ", ".join(defFields)
     valueString = ", ".join(valueFields)
-    sqlCmd = "SELECT %s, %s From Jobs GROUP BY %s" % (defString, valueString, defString)
-    result = self._query(sqlCmd)
-    if not result['OK']:
-      return result
-    return S_OK(((defFields + valueFields), result['Value']))
+    # Get all the jobGroups and construct the final result from the results for each jobGroup
+    resGroups = self.getDistinctJobAttributes('JobGroup')
+    if not resGroups['OK']:
+      return resGroups
+
+    self.log.info('Found %d groups' % len(resGroups['Value']))
+
+    totalResult = []
+
+    for jobGroup in resGroups['Value']:
+      self.log.info('Getting summary for group %s' % jobGroup)
+      sqlCmd = "SELECT %s, %s From Jobs WHERE JobGroup='%s' GROUP BY %s" % (defString, valueString, jobGroup, defString)
+      result = self._query(sqlCmd)
+      if not result['OK']:
+        return result
+      self.log.info('Total Results now: %s; new entries %s' % (len(totalResult), len(result['Value'])))
+      totalResult.extend(result['Value'])
+
+    return S_OK(((defFields + valueFields), totalResult))
+
