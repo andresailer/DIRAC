@@ -181,7 +181,9 @@ class FTS3DB(object):
          self.dbPort,
          self.dbName),
         echo=runDebug,
-        pool_size=pool_size)
+        pool_size=pool_size,
+        pool_recycle=3600,
+        )
 
     metadata.bind = self.engine
 
