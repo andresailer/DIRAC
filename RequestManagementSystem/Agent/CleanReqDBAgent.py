@@ -162,8 +162,6 @@ class CleanReqDBAgent( AgentModule ):
         
     #self.kickScheduled()
 
-    self.kickScheduled()
-
     gMonitor.addMark( "KickedRequests", kicked )
     gMonitor.addMark( "DeletedRequests", deleted )
     self.log.info( "execute: kicked assigned requests = %s" % kicked )
