@@ -289,7 +289,7 @@ class TransformationCleaningAgent(AgentModule):
     """ wipe out everything from catalog under folder :directory:
 
     :param self: self reference
-    :params str directory: folder name
+    :param str directory: folder name
     """
     self.log.verbose("Cleaning Catalog contents")
     res = self.__getCatalogDirectoryContents([directory])

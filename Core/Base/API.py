@@ -85,7 +85,7 @@ class API(object):
     """ Parameter the Job with an attributes dictionary.
         Called when un-pickling the object.
 
-    :params state: attributes dictionary
+    :param state: attributes dictionary
     """
     self.__dict__.update(state)
     # Build the Logging instance again because it can not be in the dictionary

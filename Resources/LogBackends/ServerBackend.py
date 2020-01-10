@@ -26,9 +26,9 @@ class ServerBackend(AbstractBackend):
 
   def __init__(self):
     """
-    :params __site: string representing the site where the log messages are from.
-    :params __interactive: not used at the moment.
-    :params __sleepTime: the time separating the log messages sending, in seconds.
+    :param __site: string representing the site where the log messages are from.
+    :param __interactive: not used at the moment.
+    :param __sleepTime: the time separating the log messages sending, in seconds.
     """
     super(ServerBackend, self).__init__(None, BaseFormatter)
     self.__site = None
@@ -39,7 +39,7 @@ class ServerBackend(AbstractBackend):
     """
     Each backend can initialize its attributes and create its handler with them.
 
-    :params parameters: dictionary of parameters. ex: {'FileName': file.log}
+    :param parameters: dictionary of parameters. ex: {'FileName': file.log}
     """
     if parameters is not None:
       self.__interactive = parameters.get('Interactive', self.__interactive)

@@ -35,7 +35,7 @@ class ElasticSearchBackend(AbstractBackend):
     """
     Each backend can initialize its attributes and create its handler with them.
 
-    :params parameters: dictionary of parameters. ex: {'FileName': file.log}
+    :param parameters: dictionary of parameters. ex: {'FileName': file.log}
     """
     if parameters is not None:
       self.__host = parameters.get('Host', self.__host)
@@ -78,9 +78,9 @@ class ElasticSearchBackend(AbstractBackend):
     """
     Each backend give a format to their formatters and attach them to their handlers.
 
-    :params fmt: string representing the log format
-    :params datefmt: string representing the date format
-    :params component: string represented as "system/component"
-    :params options: dictionary of logging options. ex: {'Color': True}
+    :param fmt: string representing the log format
+    :param datefmt: string representing the date format
+    :param component: string represented as "system/component"
+    :param options: dictionary of logging options. ex: {'Color': True}
     """
     pass

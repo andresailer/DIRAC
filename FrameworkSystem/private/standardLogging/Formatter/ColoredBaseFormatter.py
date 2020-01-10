@@ -47,7 +47,7 @@ class ColoredBaseFormatter(BaseFormatter):
     a log record into a string with colors.
     According to the level, the method get colors from LEVEL_MAP to add them to the message.
 
-    :params record: the log record containing all the information about the log message: name, level, threadid...
+    :param record: the log record containing all the information about the log message: name, level, threadid...
     """
 
     stringRecord = super(ColoredBaseFormatter, self).format(record)

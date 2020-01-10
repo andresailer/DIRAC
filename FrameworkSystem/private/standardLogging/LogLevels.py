@@ -47,7 +47,7 @@ class LogLevels(object):
     Get a level value from a level name.
     We could use logging.getLevelName() to get the level value but it is less simple.
 
-    :params sName: string representing a level name
+    :param sName: string representing a level name
     :return: a level value according to a level name
     """
     return cls.__levelDict.get(sName.upper())
@@ -58,7 +58,7 @@ class LogLevels(object):
     Get a level name from a level value.
     We could use logging.getLevelName() to get the level value but it is less simple.
 
-    :params level: integer representing a level value
+    :param level: integer representing a level value
     :return: a level name according to a level value
     """
     for lev in cls.__levelDict:

@@ -95,9 +95,9 @@ class LoggingRoot(Logging):
     - add colors and the path of the call : LogColor = True, LogShowLine = True
     - precise a level : LogLevel = DEBUG
 
-    :params systemName: string represented as "system name/component name"
-    :params cfgPath: string of the configuration path
-    :params forceInit: Force the initialization even if it had already happened.
+    :param systemName: string represented as "system name/component name"
+    :param cfgPath: string of the configuration path
+    :param forceInit: Force the initialization even if it had already happened.
                        This should not be used !! The only case is LocalConfiguration.enableCS
                        In order to take into account extensions' backends
     """
@@ -147,7 +147,7 @@ class LoggingRoot(Logging):
     Get backends from the configuration and register them in LoggingRoot.
     This is the new way to get the backends providing a general configuration.
 
-    :params cfgPath: string of the configuration path
+    :param cfgPath: string of the configuration path
     """
     # We have to put the import line here to avoid a dependancy loop
     from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
@@ -178,8 +178,8 @@ class LoggingRoot(Logging):
     """
     Get backend options from the configuration.
 
-    :params cfgPath: string of the configuration path
-    :params backend: string representing a backend identifier: stdout, file, f04
+    :param cfgPath: string of the configuration path
+    :param backend: string representing a backend identifier: stdout, file, f04
     """
     # We have to put the import lines here to avoid a dependancy loop
     from DIRAC import gConfig
@@ -250,7 +250,7 @@ class LoggingRoot(Logging):
     - stderr output
     - custom format close to the DIRAC format
 
-    :params isEnabled: boolean value. True allows the logs in the external lib,
+    :param isEnabled: boolean value. True allows the logs in the external lib,
                        False do not.
     """
     rootLogger = logging.getLogger()

@@ -944,7 +944,7 @@ class X509Chain(object):
   def getCredentials(self, ignoreDefault=False):
     """ Returns a summary of the credentials contained in the current chain
 
-        :params ignoreDefault: (default False) If True and if no DIRAC group is found in the proxy, lookup the CS
+        :param ignoreDefault: (default False) If True and if no DIRAC group is found in the proxy, lookup the CS
 
         :returns: S_OK with the credential dict. Some parameters of the dict are always there, other depends
                 on the nature of the Chain

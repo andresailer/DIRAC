@@ -16,7 +16,7 @@ from DIRAC.ResourceStatusSystem.Client.ResourceStatus import ResourceStatus
 def _checkSourceReplicas(ftsFiles):
   """ Check the active replicas
 
-      :params ftsFiles: list of FT3Files
+      :param ftsFiles: list of FT3Files
 
       :returns: Successful/Failed {lfn : { SE1 : PFN1, SE2 : PFN2 } , ... }
   """

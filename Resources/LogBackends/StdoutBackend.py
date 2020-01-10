@@ -31,6 +31,6 @@ class StdoutBackend(AbstractBackend):
     """
     Each backend can initialize its attributes and create its handler with them.
 
-    :params parameters: dictionary of parameters. ex: {'FileName': file.log}
+    :param parameters: dictionary of parameters. ex: {'FileName': file.log}
     """
     self._handler = logging.StreamHandler(sys.stdout)

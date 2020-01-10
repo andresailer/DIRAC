@@ -51,10 +51,10 @@ class Logging(object):
     logging.getLogger('') == logging.getLogger('root') == root logger
     logging.getLogger('root').getChild('log') == root.log == log child of root
 
-    :params father: Logging, father of this new Logging.
-    :params fatherName: string representing the name of the father logger in the chain.
-    :params name: string representing the name of the logger in the chain.
-    :params customName: string representing the name of the logger in the chain:
+    :param father: Logging, father of this new Logging.
+    :param fatherName: string representing the name of the father logger in the chain.
+    :param name: string representing the name of the logger in the chain.
+    :param customName: string representing the name of the logger in the chain:
                         - "root" does not appear at the beginning of the chain
                         - hierarchy "." are replaced by "\"
                         useful for the display of the Logging name
@@ -106,7 +106,7 @@ class Logging(object):
     """
     Depending on the value, display or not the prefix of the message.
 
-    :params yesno: boolean determining the behaviour of the display
+    :param yesno: boolean determining the behaviour of the display
     """
     self._setOption('headerIsShown', yesno)
 
@@ -114,7 +114,7 @@ class Logging(object):
     """
     Depending on the value, display or not the thread ID.
 
-    :params yesno: boolean determining the behaviour of the display
+    :param yesno: boolean determining the behaviour of the display
     """
     self._setOption('threadIDIsShown', yesno)
 
@@ -124,9 +124,9 @@ class Logging(object):
     Propagate the option to the children.
     The options of the children will be updated if they were not modified before by a developer.
 
-    :params optionName: string representing the name of the option to modify
-    :params value: boolean to give to the option
-    :params directCall: boolean indicating if it is a call by the user or not
+    :param optionName: string representing the name of the option to modify
+    :param value: boolean to give to the option
+    :param directCall: boolean indicating if it is a call by the user or not
     """
     # lock to prevent that two threads change the options at the same time
     self._lockOptions.acquire()
@@ -153,9 +153,9 @@ class Logging(object):
     Attach a list of backends to the Logging object.
     Convert backend name to backend class name to a Backend object and add it to the Logging object
 
-    :params desiredBackends: a list of different names attaching to differents backends.
+    :param desiredBackends: a list of different names attaching to differents backends.
                              list of the possible values: ['stdout', 'stderr', 'file', 'server']
-    :params backendOptions: dictionary of different backend options.
+    :param backendOptions: dictionary of different backend options.
                             example: FileName='/tmp/log.txt'
     """
     for backendName in desiredBackends:
@@ -166,9 +166,9 @@ class Logging(object):
     Attach a backend to the Logging object.
     Convert backend name to backend class name to a Backend object and add it to the Logging object
 
-    :params desiredBackend: a name attaching to a backend type.
+    :param desiredBackend: a name attaching to a backend type.
                             list of the possible values: ['stdout', 'stderr', 'file', 'server']
-    :params backendOptions: dictionary of different backend options.
+    :param backendOptions: dictionary of different backend options.
                             example: FileName='/tmp/log.txt'
     """
     # Remove white space and capitalize the first letter
@@ -187,8 +187,8 @@ class Logging(object):
     """
     Attach a Backend object to the Logging object.
 
-    :params backend: Backend object that has to be added
-    :params backendOptions: a dictionary of different backend options.
+    :param backend: Backend object that has to be added
+    :param backendOptions: a dictionary of different backend options.
                             example: {'FileName': '/tmp/log.txt'}
     """
     backend.createHandler(backendOptions)
@@ -212,7 +212,7 @@ class Logging(object):
     """
     Check if the level name exists and get the integer value before setting it.
 
-    :params levelName: string representing the level to give to the logger
+    :param levelName: string representing the level to give to the logger
 
     :return: boolean representing if the setting is done or not
     """
@@ -228,8 +228,8 @@ class Logging(object):
     Set the level of the Logging too.
     Propagate the level to its children.
 
-    :params level: integer representing the level to give to the logger
-    :params directCall: boolean indicating if it is a call by the user or not
+    :param level: integer representing the level to give to the logger
+    :param directCall: boolean indicating if it is a call by the user or not
     """
     # lock to prevent that two threads change the level at the same time
     self._lockLevel.acquire()
@@ -271,7 +271,7 @@ class Logging(object):
     """
     Determine if messages with a certain level will be displayed or not.
 
-    :params levelName: string representing the level to analyse
+    :param levelName: string representing the level to analyse
 
     :return: boolean which give the answer
     """
@@ -396,10 +396,10 @@ class Logging(object):
     Nevertheless, backends and the logger have the same level value,
     so we can test if the message will be displayed or not.
 
-    :params level: positive integer representing the level of the log record
-    :params sMsg: string representing the message
-    :params sVarMsg: string representing an optional message
-    :params exc_info: boolean representing the stacktrace for the exception
+    :param level: positive integer representing the level of the log record
+    :param sMsg: string representing the message
+    :param sVarMsg: string representing an optional message
+    :param exc_info: boolean representing the stacktrace for the exception
 
     :return: boolean representing the result of the log record creation
     """
@@ -470,7 +470,7 @@ class Logging(object):
   def __getFilterOptionsFromCFG(self, logFilter):
     """Get filter options from the configuration..
 
-    :params logFilter: string representing a filter identifier: stdout, file, f04
+    :param logFilter: string representing a filter identifier: stdout, file, f04
     """
     # We have to put the import lines here to avoid a dependancy loop
     from DIRAC.ConfigurationSystem.Client.Helpers.Resources import getFilterConfig
@@ -486,7 +486,7 @@ class Logging(object):
     """
     Create a new Logging object, child of this Logging, if it does not exists.
 
-    :params subName: the name of the child Logging
+    :param subName: the name of the child Logging
     """
     _ = child  # make pylint happy
     # lock to prevent that the method initializes two Logging for the same 'logging' logger

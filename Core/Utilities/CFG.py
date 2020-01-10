@@ -124,7 +124,7 @@ class CFG(object):
     Replace the contents of a section
 
     :type sectionName: string
-    :params sectionName: Name of the section
+    :param sectionName: Name of the section
     :type oCFGToClone: CFG
     :param oCFGToClone: CFG with the contents of the section
     """

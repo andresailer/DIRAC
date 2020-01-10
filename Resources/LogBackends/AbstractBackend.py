@@ -33,8 +33,8 @@ class AbstractBackend(object):
     _handler and _formatter can be custom objects. If it is the case, you can find them 
     in FrameworkSystem/private/standardLogging/Formatter or Handler.
 
-    :params _handler: handler object from 'logging'. Ex: StreamHandler(), FileHandler()... 
-    :params _formatter: the name of a formatter object from logging. Ex: BaseFormatter  
+    :param _handler: handler object from 'logging'. Ex: StreamHandler(), FileHandler()...
+    :param _formatter: the name of a formatter object from logging. Ex: BaseFormatter
     """
     self._handler = handler
     self._formatter = formatter
@@ -43,7 +43,7 @@ class AbstractBackend(object):
     """
     Each backend can initialize its attributes and create its handler with them.
 
-    :params parameters: dictionary of parameters. ex: {'FileName': file.log}
+    :param parameters: dictionary of parameters. ex: {'FileName': file.log}
     """
     raise NotImplementedError("setParameter not implemented")
 
@@ -57,10 +57,10 @@ class AbstractBackend(object):
     """
     Each backend give a format to their formatters and attach them to their handlers.
 
-    :params fmt: string representing the log format
-    :params datefmt: string representing the date format
-    :params component: string represented as "system/component"
-    :params options: dictionary of logging options. ex: {'Color': True}
+    :param fmt: string representing the log format
+    :param datefmt: string representing the date format
+    :param component: string represented as "system/component"
+    :param options: dictionary of logging options. ex: {'Color': True}
     """
     self._handler.setFormatter(self._formatter(fmt, datefmt, options))
 
@@ -68,7 +68,7 @@ class AbstractBackend(object):
     """
     Configure the level of the handler associated to the backend.
 
-    :params level: integer representing a level
+    :param level: integer representing a level
     """
     self._handler.setLevel(level)
 
@@ -77,8 +77,8 @@ class AbstractBackend(object):
     """
     Create a format from the options given in parameters. 
 
-    :params options: dictionary of options of the Logging which wants a new format
-    :params level: integer representing the level of the Logging object which wants a new format
+    :param options: dictionary of options of the Logging which wants a new format
+    :param level: integer representing the level of the Logging object which wants a new format
     :return: tuple containing two strings: a format and a date format
     """
     fmt = ''

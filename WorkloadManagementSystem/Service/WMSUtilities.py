@@ -150,7 +150,7 @@ def getGridJobOutput(pilotReference):
 def killPilotsInQueues(pilotRefDict):
   """ kill pilots queue by queue
 
-      :params dict pilotRefDict: a dict of pilots in queues
+      :param dict pilotRefDict: a dict of pilots in queues
   """
 
   ceFactory = ComputingElementFactory()

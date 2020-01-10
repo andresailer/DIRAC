@@ -333,7 +333,7 @@ def getCatalogPath(catalogName):
 def getBackendConfig(backendID):
   """ Return a backend configuration for a given backend identifier
 
-  :params backendID: string representing a backend identifier. Ex: stdout, file, f02
+  :param backendID: string representing a backend identifier. Ex: stdout, file, f02
   """
   return gConfig.getOptionsDict('Resources/LogBackends/%s' % backendID)
 
@@ -341,6 +341,6 @@ def getBackendConfig(backendID):
 def getFilterConfig(filterID):
   """Return a filter configuration for a given filter identifier.
 
-  :params filterID: string representing a filter identifier.
+  :param filterID: string representing a filter identifier.
   """
   return gConfig.getOptionsDict('Resources/LogFilters/%s' % filterID)

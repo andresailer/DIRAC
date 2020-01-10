@@ -25,7 +25,7 @@ class FileBackend(AbstractBackend):
 
   def __init__(self):
     """
-    :params __filename: string representing the default name of the file. 
+    :param __filename: string representing the default name of the file.
                         The default name come from the old gLogger.
     """
     super(FileBackend, self).__init__(None, BaseFormatter)
@@ -35,7 +35,7 @@ class FileBackend(AbstractBackend):
     """
     Each backend can initialize its attributes and create its handler with them.
 
-    :params parameters: dictionary of parameters. ex: {'FileName': file.log}
+    :param parameters: dictionary of parameters. ex: {'FileName': file.log}
     """
     if parameters is not None:
       self.__fileName = parameters.get('FileName', self.__fileName)

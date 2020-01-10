@@ -28,9 +28,9 @@ class ServerHandler(logging.Handler, threading.Thread):
     Initialization of the ServerHandler.
     The queue is initialized with the hostname and the start of the thread.
 
-    :params sleepTime: integer, representing time in seconds where the handler can send messages.
-    :params interactive: not used at the moment.
-    :params site: the site where the log messages come from.
+    :param sleepTime: integer, representing time in seconds where the handler can send messages.
+    :param interactive: not used at the moment.
+    :param site: the site where the log messages come from.
     """
     super(ServerHandler, self).__init__()
     threading.Thread.__init__(self)
@@ -51,7 +51,7 @@ class ServerHandler(logging.Handler, threading.Thread):
     """
     Add the record to the queue.
 
-    :params record: log record object
+    :param record: log record object
     """
     self.__logQueue.put(record)
 
@@ -87,7 +87,7 @@ class ServerHandler(logging.Handler, threading.Thread):
     """
     Send log to the SystemLogging service.
 
-    :params logBundle: list of logs ready to be send to the service
+    :param logBundle: list of logs ready to be send to the service
     """
     from DIRAC.Core.DISET.RPCClient import RPCClient
     if logBundle:

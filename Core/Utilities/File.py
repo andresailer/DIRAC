@@ -165,7 +165,7 @@ def getGlobbedTotalSize(files):
   """Get total size of a list of files or a single file.
   Globs the parameter to allow regular expressions.
 
-  :params list files: list or tuple of strings of files
+  :param list files: list or tuple of strings of files
   """
   totalSize = 0
   if isinstance(files, (list, tuple)):
@@ -191,7 +191,7 @@ def getGlobbedFiles(files):
   """Get list of files or a single file.
   Globs the parameter to allow regular expressions.
 
-  :params list files: list or tuple of strings of files
+  :param list files: list or tuple of strings of files
   """
   globbedFiles = []
   if isinstance(files, (list, tuple)):

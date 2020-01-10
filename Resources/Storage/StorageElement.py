@@ -373,11 +373,11 @@ class StorageElementItem(object):
 
         It loops over the different Storage Plugins to query it.
 
-        :params occupancyLFN: (named param) LFN where to find the space reporting json file on the storage
+        :param occupancyLFN: (named param) LFN where to find the space reporting json file on the storage
                               The json file should contain the Free and Total space in B.
                               If not specified, the default path will be </vo/occupancy.json>
 
-        :params unit: (default MB)unit of the value returned. See :py:func:`~DIRAC.Core.Utilities.File.convertSizeUnits`
+        :param unit: (default MB)unit of the value returned. See :py:func:`~DIRAC.Core.Utilities.File.convertSizeUnits`
                       CAUTION: only the `Total` and `Free` field are converted !
                       Since the rest is whatever is returned by the plugin no conversion is performed
 

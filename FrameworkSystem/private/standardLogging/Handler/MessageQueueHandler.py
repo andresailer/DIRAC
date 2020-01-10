@@ -26,7 +26,7 @@ class MessageQueueHandler(logging.Handler):
     """
     Initialization of the MessageQueueHandler.
 
-    :params queue: string representing the queue identifier in the configuration.
+    :param queue: string representing the queue identifier in the configuration.
                    example: "mardirac3.in2p3.fr::Queues::TestQueue"
     """
     super(MessageQueueHandler, self).__init__()
@@ -40,7 +40,7 @@ class MessageQueueHandler(logging.Handler):
     """
     Add the record to the message queue.
 
-    :params record: log record object
+    :param record: log record object
     """
     # add the hostname to the record
     record.hostname = self.hostname
