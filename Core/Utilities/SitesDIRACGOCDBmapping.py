@@ -18,8 +18,7 @@ def getGOCSiteName(diracSiteName):
   """
   Get GOC DB site name, given the DIRAC site name, as it stored in the CS
 
-  :params:
-    :attr:`diracSiteName` - string: DIRAC site name (e.g. 'LCG.CERN.ch')
+  :param str diracSiteName: DIRAC site name (e.g. 'LCG.CERN.ch')
   """
   gocDBName = gConfig.getValue('/Resources/Sites/%s/%s/Name' % (diracSiteName.split('.')[0],
                                                                 diracSiteName))
@@ -52,8 +51,7 @@ def getGOCFTSName(diracFTSName):
   """
   Get GOC DB FTS server URL, given the DIRAC FTS server name, as it stored in the CS
 
-  :params:
-    :attr:`diracFTSName` - string: DIRAC FTS server name (e.g. 'CERN-FTS3')
+  :param str diracFTSName: DIRAC FTS server name (e.g. 'CERN-FTS3')
   """
 
   csPath = "/Resources/FTSEndpoints/FTS3"
@@ -70,8 +68,7 @@ def getDIRACSiteName(gocSiteName):
   """
   Get DIRAC site name, given the GOC DB site name, as it stored in the CS
 
-  :params:
-    :attr:`gocSiteName` - string: GOC DB site name (e.g. 'CERN-PROD')
+  :param str gocSiteName: GOC DB site name (e.g. 'CERN-PROD')
   """
   diracSites = []
   result = gConfig.getSections("/Resources/Sites")

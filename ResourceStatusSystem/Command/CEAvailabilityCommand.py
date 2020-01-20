@@ -20,9 +20,11 @@ class CEAvailabilityCommand(Command):
   def __init__(self, args=None):
     '''
 
-      :params: args: dictionary specifying following values
-        :attr:`ce`: Computing Element (mandatory)
-        :attr:`host`: BDII server (optional)
+    :param dict args: dictionary specifying following values
+
+      * ``ce``: Computing Element (mandatory)
+      * ``host``: BDII server (optional)
+
     '''
     super(CEAvailabilityCommand, self).__init__(args)
 

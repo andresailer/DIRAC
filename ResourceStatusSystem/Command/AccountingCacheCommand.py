@@ -42,11 +42,7 @@ class SuccessfullJobsBySiteSplittedCommand(Command):
     Returns successfull jobs using the DIRAC accounting system for every site
     for the last self.args[0] hours
 
-    :params:
-      :attr:`sites`: list of sites (when not given, take every site)
-
     :returns:
-
     """
 
     if 'hours' not in self.args:
@@ -123,11 +119,7 @@ class FailedJobsBySiteSplittedCommand(Command):
     Returns failed jobs using the DIRAC accounting system for every site
     for the last self.args[0] hours
 
-    :params:
-      :attr:`sites`: list of sites (when not given, take every site)
-
     :returns:
-
     """
 
     if 'hours' not in self.args:
@@ -204,9 +196,6 @@ class SuccessfullPilotsBySiteSplittedCommand(Command):
     """
     Returns successfull pilots using the DIRAC accounting system for every site
     for the last self.args[0] hours
-
-    :params:
-      :attr:`sites`: list of sites (when not given, take every site)
 
     :returns:
 
@@ -287,9 +276,6 @@ class FailedPilotsBySiteSplittedCommand(Command):
     Returns failed jobs using the DIRAC accounting system for every site
     for the last self.args[0] hours
 
-    :params:
-      :attr:`sites`: list of sites (when not given, take every site)
-
     :returns:
 
     """
@@ -368,9 +354,6 @@ class SuccessfullPilotsByCESplittedCommand(Command):
     """
     Returns successfull pilots using the DIRAC accounting system for every CE
     for the last self.args[0] hours
-
-    :params:
-      :attr:`CEs`: list of CEs (when not given, take every CE)
 
     :returns:
 
@@ -453,9 +436,6 @@ class FailedPilotsByCESplittedCommand(Command):
     Returns failed pilots using the DIRAC accounting system for every CE
     for the last self.args[0] hours
 
-    :params:
-      :attr:`CEs`: list of CEs (when not given, take every CE)
-
     :returns:
 
     """
@@ -536,9 +516,6 @@ class RunningJobsBySiteSplittedCommand(Command):
     """
     Returns running and runned jobs, querying the WMSHistory
     for the last self.args[0] hours
-
-    :params:
-      :attr:`sites`: list of sites (when not given, take every sites)
 
     :returns:
 

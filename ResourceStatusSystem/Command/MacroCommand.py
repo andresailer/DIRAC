@@ -30,9 +30,7 @@ class MacroCommand( Command ):
     """
     Method to be called as first at every MacroCommand instantiation.
 
-    :params:
-
-      :attr:`commandsListIn`: a list of command objects
+    :param commandsListIn: a list of command objects
     """
     if not isinstance(commandsListIn, list):
       commandsListIn = [commandsListIn]
@@ -45,9 +43,7 @@ class MacroCommand( Command ):
     """
     Set the arguments of the commands.
 
-    :params:
-
-      :attr:`argsListIn`: a list of args tuples, or just a tuple of args
+    :param argsListIn: a list of args tuples, or just a tuple of args
     """
     if not isinstance(argsListIn, list):
       argsListIn = [argsListIn]
@@ -72,8 +68,7 @@ class MacroCommand( Command ):
     Set `self.clients`. If not set, a standard client will be instantiated.
     Then, set the clients used by the commands.
 
-    :params:
-      :attr:`clientListIn`: a list of client object
+    :param clientListIn: a list of client object
     """
     if not isinstance(clientListIn, list):
       clientListIn = [clientListIn]

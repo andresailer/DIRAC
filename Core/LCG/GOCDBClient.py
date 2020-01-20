@@ -174,11 +174,8 @@ class GOCDBClient(object):
     """
     Get service endpoint info (in a dictionary)
 
-    :params:
-      :attr:`granularity` : a string. Could be in ('hostname', 'sitename', 'roc',
-      'country', 'service_type', 'monitored')
-
-      :attr:`entity` : a string. Actual name of the entity.
+    :param str granularity: Could be in ('hostname', 'sitename', 'roc', 'country', 'service_type', 'monitored')
+    :param str entity: Actual name of the entity.
     """
     assert isinstance(granularity, basestring) and isinstance(entity, basestring)
     try:
@@ -239,8 +236,7 @@ class GOCDBClient(object):
 #    """
 #    Get site info (in a dictionary)
 #
-#    :params:
-#      :attr:`entity` : a string. Actual name of the site.
+#    :param str entity: Actual name of the site.
 #    """
 #
 #    siteXML = self._getSiteCurlDownload(site)
@@ -294,11 +290,8 @@ class GOCDBClient(object):
     """
     Calls method `get_service_endpoint` from the GOC DB programmatic interface.
 
-    :params:
-      :attr:`granularity` : a string. Could be in ('hostname', 'sitename', 'roc',
-      'country', 'service_type', 'monitored')
-
-      :attr:`entity` : a string. Actual name of the entity.
+    :param str granularity: Could be in ('hostname', 'sitename', 'roc', 'country', 'service_type', 'monitored')
+    :param str entity: Actual name of the entity.
     """
     if not isinstance(granularity, basestring) or not isinstance(entity, basestring):
       raise ValueError("Arguments must be strings.")
@@ -318,8 +311,7 @@ class GOCDBClient(object):
 #    """
 #    Calls method `get_site` from the GOC DB programmatic interface.
 #
-#    :params:
-#      :attr:`site` : a string. Actual name of the site.
+#    :param str site: Actual name of the site.
 #    """
 #
 #    # GOCDB-PI query

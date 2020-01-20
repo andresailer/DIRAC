@@ -25,8 +25,7 @@ class PolicyBase(object):
     """
     Set `self.command`.
 
-    :params:
-      :attr:`commandIn`: a command object
+    :param policyCommand: a command object
     """
     if policyCommand is not None:
       self.command = policyCommand
