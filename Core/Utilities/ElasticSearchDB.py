@@ -97,7 +97,7 @@ class ElasticSearchDB(object):
     """ Executes a query and returns its result (uses ES DSL language).
 
     :param self: self reference
-    :param basestring index: index name
+    :param str index: index name
     :param dict query: It is the query in ElasticSearch DSL language
 
     """
@@ -111,8 +111,8 @@ class ElasticSearchDB(object):
     """ Executes an update of a document, and returns S_OK/S_ERROR
 
     :param self: self reference
-    :param basestring index: index name
-    :param basestring doctype: type of document
+    :param str index: index name
+    :param str doctype: type of document
     :param dict query: It is the query in ElasticSearch DSL language
     :param bool updateByQuery: A bool to determine updation by update by query or index values using index function.
     :param int id: ID for the document to be created.
