@@ -150,7 +150,9 @@ def selectUniqueRandomSource(ftsFiles, allowedSources=None):
     allowedReplicaSource = (set(replicaDict) & allowedSourcesSet) if allowedSourcesSet else replicaDict
 
     # pick a random source
-
+    if not allowedReplicaSource:
+      _log.info('No allowed replica source for file', ftsFile.lfn)
+      continue
     randSource = random.choice(list(allowedReplicaSource))  # one has to convert to list
 
     groupBySource.setdefault(randSource, []).append(ftsFile)
