@@ -270,6 +270,25 @@ class JobCleaningAgent(AgentModule):
     result = {'Successful': successful, 'Failed': failed}
     return S_OK(result)
 
+  def removeHeartBeatLoggingInfo(self, status, delayDays):
+    """Remove entries from HeartBeatLoggingInfo.
+    
+    :param str status: status of the jobs for which to delete the entries
+    :param int delayDays: minimum age of jobs
+    :return: S_OK
+    """
+    gLogger.info("Removing HeartBeatLoggingInfo for Jobs with %s and older than %s day(s)" % (status, delayDays))
+    delTime = str(Time.dateTime() - delayDays * Time.day)
+    gLogger.info('Deltime %s' % delTime )
+
+    result = self.jobDB.removeInfoFromHeartBeatLogging(status, delTime, self.maxJobsAtOnce)
+    if not result['OK']:
+      gLogger.error('Failed to delete from HeartBeatLoggingInfo')
+    else:
+      gLogger.info('Deleted HeartBeatLogging info')
+    return S_OK()
+
+
   def __setRemovalRequest(self, lfn, ownerDN, ownerGroup):
     """ Set removal request with the given credentials
     """
