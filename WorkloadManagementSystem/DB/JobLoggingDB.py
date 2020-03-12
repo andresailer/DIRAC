@@ -79,7 +79,7 @@ class JobLoggingDB(DB):
 
     cmd = "INSERT INTO LoggingInfo (JobId, Status, MinorStatus, ApplicationStatus, " + \
           """StatusTime, StatusTimeOrder, StatusSource) VALUES (%d,"%s","%s","%s","%s",%f,"%s")""" % \
-        (int(jobID), status, minor, application, str(_date), time_order, source)
+        (int(jobID), status, minor, application, str(_date), time_order, source[:32])
 
     return self._update(cmd)
 
