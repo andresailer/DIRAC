@@ -295,7 +295,7 @@ class JobCleaningAgent(AgentModule):
     """
     gLogger.info("Removing HeartBeatLoggingInfo for Jobs with %s and older than %s day(s)" % (status, delayDays))
     delTime = str(Time.dateTime() - delayDays * Time.day)
-    result = self.jobDB.removeInfoFromHeartBeatLogging(status, delTime, 40*self.maxJobsAtOnce)
+    result = self.jobDB.removeInfoFromHeartBeatLogging(status, delTime, 100)
     if not result['OK']:
       gLogger.error('Failed to delete from HeartBeatLoggingInfo')
     else:
