@@ -691,8 +691,10 @@ class FTS3DB(object):
     session = self.dbSession()
     try:
       print "Setting files and Job to failed for:", ftsJob.jobID
-      updateFile = {FTS3File.status: 'Failed'}
-      updateJob = {FTS3Job.status: 'Failed'}
+      updateFile = {FTS3File.status: 'Failed', 
+                    FTS3File.ftsGUID: None}
+      updateJob = {FTS3Job.status: 'Failed', 
+                   FTS3Job.assignment: None}
       updateOp = {FTS3Operation.status: 'Processed'}
       operationIDs = session.query(FTS3Job.operationID)\
           .filter(FTS3Job.jobID == ftsJob.jobID).all()
