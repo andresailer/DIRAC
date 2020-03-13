@@ -149,6 +149,9 @@ def selectUniqueRandomSource(ftsFiles, allowedSources=None):
     # If we have a restriction, apply it, otherwise take all the replicas
     allowedReplicaSource = (set(replicaDict) & allowedSourcesSet) if allowedSourcesSet else replicaDict
 
+    if not allowedReplicaSource:
+      _log.error("No allowed source for file '%s'" % ftsFile.lfn)
+      continue
     # pick a random source
     if not allowedReplicaSource:
       _log.info('No allowed replica source for file', ftsFile.lfn)
