@@ -390,8 +390,9 @@ class DataRecoveryAgent(AgentModule):
           self.log.error('+++++ Failure for job:', job.jobID)
           self.log.error('+++++ Exception: ', str(e))
 
-    timeSpent = float(time.time() - jobInfoStart)
-    self.log.notice('Getting JobInfo Done: %3.1fs (%3.3fs per job)' % (timeSpent, timeSpent / counter))
+    if counter > 0:
+      timeSpent = float(time.time() - jobInfoStart)
+      self.log.notice('Getting JobInfo Done: %3.1fs (%3.3fs per job)' % (timeSpent, timeSpent / counter))
 
     counter = 0
     fileInfoStart = time.time()
