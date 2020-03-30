@@ -900,6 +900,10 @@ class AccountingDB(DB):
         sqlValues.append("(%s*%s)" % (valuesList[valPos], bProportion))
       valuesGroups.append("( %s )" % ",".join(str(val) for val in sqlValues))
 
+    if not valuesGroups:
+      self.log.warn('No Values to bucket')
+      return S_OK()
+
     cmd = "INSERT INTO `%s` ( %s ) " % (_getTableName("bucket", typeName), ", ".join(sqlFields))
     cmd += "VALUES %s " % ", ".join(valuesGroups)
     cmd += "ON DUPLICATE KEY UPDATE %s" % ", ".join(sqlUpData)
@@ -910,11 +914,14 @@ class AccountingDB(DB):
         # If failed because of dead lock try restarting
         if result['Message'].find("try restarting transaction"):
           continue
+        else:
+          self.log.error('Failed SQL Command:', cmd)
         return result
       # If OK, break loopo
       if result['OK']:
         return result
 
+    self.log.error('Failed SQL Command:', cmd)
     return S_ERROR("Cannot update bucket: %s" % result['Message'])
 
   def __checkFieldsExistsInType(self, typeName, fields, tableType):
