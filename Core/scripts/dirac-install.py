@@ -2472,6 +2472,8 @@ def createBashrcForDiracOS():
       lines.append('# export DIRAC_USE_M2CRYPTO=true')
       lines.append('# export DIRAC_USE_NEWTHREADPOOL=yes')
       lines.append('# export DIRAC_VOMSES=$DIRAC/etc/grid-security/vomses')
+      lines.append('# export DIRAC_USE_JSON_ENCODE=no')
+      lines.append('# export DIRAC_USE_JSON_DECODE=no')
 
       # Add the lines required for further env variables requested
       if cliParams.userEnvVariables:
