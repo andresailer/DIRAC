@@ -31,6 +31,7 @@ class AgentModule(object):
       DIRAC Agents.
 
       For this purpose the following methods are used:
+
       - am_initialize()      just after instantiated
       - am_getPollingTime()  to set the execution frequency
       - am_getMaxCycles()    to determine the number of cycles
@@ -38,20 +39,24 @@ class AgentModule(object):
 
       Before each iteration, the following methods are used to determine
       if the new cycle is to be started.
+
       - am_getModuleParam( 'alive' )
       - am_checkStopAgentFile()
       - am_removeStopAgentFile()
 
       To start new execution cycle the following methods are used
+
       - am_getCyclesDone()
       - am_setOption( 'MaxCycles', maxCycles )
 
       At the same time it provides all Agents with common interface.
       All Agent class must inherit from this base class and must implement
       at least the following method:
+
       - execute()            main method called in the agent cycle
 
       Additionally they may provide:
+
       - initialize()         for initial settings
       - finalize()           the graceful exit
 
@@ -67,15 +72,17 @@ class AgentModule(object):
     """
       Common __init__ method for all Agents.
       All Agent modules must define:
-      __doc__
-      __RCSID__
+
+      - __doc__
+      - __RCSID__
+
       They are used to populate __codeProperties
 
       The following Options are used from the Configuration:
+
       - /LocalSite/InstancePath
       - /DIRAC/Setup
       - Status
-      - Enabled
       - PollingTime            default = 120
       - MaxCycles              default = 500
       - WatchdogTime           default = 0 (disabled)
@@ -85,6 +92,7 @@ class AgentModule(object):
       - shifterProxyLocation   WorkDirectory/SystemName/AgentName/.shifterCred
 
       It defines the following default Options that can be set via Configuration (above):
+
       - MonitoringEnabled     True
       - Enabled               True if Status == Active
       - PollingTime           120
