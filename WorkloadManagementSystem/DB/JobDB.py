@@ -47,6 +47,7 @@ from __future__ import division
 import six
 from six.moves import range
 import operator
+import zlib
 
 __RCSID__ = "$Id$"
 
@@ -928,17 +929,17 @@ class JobDB(DB):
     if jdl:
 
       if updateFlag:
-        cmd = "UPDATE JobJDLs Set JDL=%s WHERE JobID=%s" % (e_JDL, jobID)
+        cmd = "UPDATE JobJDLs Set JDL='%s' WHERE JobID=%s" % (self.__compressJDL(jdl), jobID)
       else:
-        cmd = "INSERT INTO JobJDLs (JobID,JDL) VALUES (%s,%s)" % (jobID, e_JDL)
+        cmd = "INSERT INTO JobJDLs (JobID,JDL) VALUES (%s,'%s')" % (jobID, self.__compressJDL(jdl))
       result = self._update(cmd)
       if not result['OK']:
         return result
     if originalJDL:
       if updateFlag:
-        cmd = "UPDATE JobJDLs Set OriginalJDL=%s WHERE JobID=%s" % (e_originalJDL, jobID)
+        cmd = "UPDATE JobJDLs Set OriginalJDL='%s' WHERE JobID=%s" % (self.__compressJDL(originalJDL), jobID)
       else:
-        cmd = "INSERT INTO JobJDLs (JobID,OriginalJDL) VALUES (%s,%s)" % (jobID, e_originalJDL)
+        cmd = "INSERT INTO JobJDLs (JobID,OriginalJDL) VALUES (%s,'%s')" % (jobID, self.__compressJDL(originalJDL))
 
       result = self._update(cmd)
 
@@ -953,7 +954,7 @@ class JobDB(DB):
 
     result = self.insertFields('JobJDLs',
                                ['JDL', 'JobRequirements', 'OriginalJDL'],
-                               ['', '', jdl])
+                               ['', '', self.__compressJDL(jdl)])
     if not result['OK']:
       self.log.error('Can not insert New JDL', result['Message'])
       return result
@@ -967,8 +968,20 @@ class JobDB(DB):
 
     return S_OK(jobID)
 
+  @staticmethod
+  def __compressJDL(jdl):
+    """Return compressed JDL string."""
+    return zlib.compress(jdl, -1).encode('base64')
+
+  @staticmethod
+  def __extractJDL(compressedJDL):
+    """Return decompressed JDL string."""
+    if compressedJDL.startswith('['):
+      return compressedJDL
+    return zlib.decompress(compressedJDL.decode('base64'))
+
 #############################################################################
-  def getJobJDL(self, jobID, original=False, status=''):
+  def getJobJDL(self, jobID, original=False):
     """ Get JDL for job specified by its jobID. By default the current job JDL
         is returned. If 'original' argument is True, original JDL is returned
     """
@@ -977,25 +990,18 @@ class JobDB(DB):
       return ret
     jobID = ret['Value']
 
-    ret = self._escapeString(status)
-    if not ret['OK']:
-      return ret
-    e_status = ret['Value']
-
     if original:
       cmd = "SELECT OriginalJDL FROM JobJDLs WHERE JobID=%s" % jobID
     else:
       cmd = "SELECT JDL FROM JobJDLs WHERE JobID=%s" % jobID
-
-    if status:
-      cmd = cmd + " AND Status=%s" % e_status
 
     result = self._query(cmd)
     if result['OK']:
       jdl = result['Value']
       if not jdl:
         return S_OK(jdl)
-      return S_OK(result['Value'][0][0])
+      
+      result['Value'] = self.__extractJDL(jdl[0][0])
     return result
 
 #############################################################################
@@ -1315,6 +1321,7 @@ class JobDB(DB):
       result = S_ERROR('Errors while job removal (tables %s)' % ','.join(failedTablesList))
 
     return result
+
 
 #################################################################
   def rescheduleJobs(self, jobIDs):
