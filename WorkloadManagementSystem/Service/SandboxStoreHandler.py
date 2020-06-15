@@ -104,21 +104,26 @@ class SandboxStoreHandler(RequestHandler):
       return result
     seName, sePFN = result['Value']
 
-    result = sandboxDB.getSandboxId(seName, sePFN, credDict['username'], credDict['group'])
-    if result['OK']:
-      gLogger.info("Sandbox already exists. Skipping upload")
-      fileHelper.markAsTransferred()
-      sbURL = "SB:%s|%s" % (seName, sePFN)
-      assignTo = dict([(key, [(sbURL, assignTo[key])]) for key in assignTo])
-      result = self.export_assignSandboxesToEntities(assignTo)
-      if not result['OK']:
-        return result
-      return S_OK(sbURL)
-
     if self.__useLocalStorage:
       hdPath = self.__sbToHDPath(sbPath)
     else:
       hdPath = False
+
+    sandboxRegistered = False
+    result = sandboxDB.getSandboxId(seName, sePFN, credDict['username'], credDict['group'])
+    if result['OK']:
+      sandboxRegistered = True
+      sbURL = "SB:%s|%s" % (seName, sePFN)
+      if os.path.exists(hdPath):
+        gLogger.info("Sandbox already exists. Skipping upload")
+        fileHelper.markAsTransferred()
+        sbURL = "SB:%s|%s" % (seName, sePFN)
+        assignTo = dict([(key, [(sbURL, assignTo[key])]) for key in assignTo])
+        result = self.export_assignSandboxesToEntities(assignTo)
+        if not result['OK']:
+          return result
+        return S_OK(sbURL)
+
     # Write to local file
     result = self.__networkToFile(fileHelper, hdPath)
     if not result['OK']:
@@ -139,7 +144,12 @@ class SandboxStoreHandler(RequestHandler):
       if not result['OK']:
         return result
       sbPath = result['Value'][1]
+
     # Register!
+    if sandboxRegistered:
+      gLogger.info("Sandbox re-uploaded", "SB:%s|%s" % (self.__seNameToUse, sbPath))
+      return S_OK(sbURL)
+
     gLogger.info("Registering sandbox in the DB with", "SB:%s|%s" % (self.__seNameToUse, sbPath))
     result = sandboxDB.registerAndGetSandbox(credDict['username'], credDict['DN'], credDict['group'],
                                              self.__seNameToUse, sbPath, fileHelper.getTransferedBytes())
