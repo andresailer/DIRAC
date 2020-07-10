@@ -536,6 +536,7 @@ class SystemAdministratorHandler(RequestHandler):
         occupancy = fields[4]
         summary += ",%s:%s" % (partition, occupancy)
     result['DiskOccupancy'] = summary[1:]
+    result['Disk'] = summary[1:]
     result['RootDiskSpace'] = Os.getDiskSpace(rootPath)
 
     # Open files

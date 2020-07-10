@@ -303,6 +303,7 @@ class HostLogging(componentsBase):
                   'Load15': self.Load15,
                   'Memory': self.Memory,
                   'DiskOccupancy': self.DiskOccupancy,
+                  'Disk': self.DiskOccupancy,
                   'Swap': self.Swap,
                   'CPUClock': self.CPUClock,
                   'CPUModel': self.CPUModel,
