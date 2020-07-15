@@ -226,14 +226,20 @@ class PublisherHandler(RequestHandler):
 
   def export_setToken(self, element, name, statusType, token, elementType, username, lastCheckTime):
 
-    lastCheckTime = datetime.strptime(lastCheckTime, '%Y-%m-%d %H:%M:%S')
+    if lastCheckTime:
+      lastCheckTime = datetime.strptime(lastCheckTime, '%Y-%m-%d %H:%M:%S')
 
     credentials = self.getRemoteCredentials()
     self.log.info(credentials)
 
+    # for releasing token for SE from WebApp
+    if statusType.endswith(" elements"):
+      statusType = ""
+
     elementInDB = rsClient.selectStatusElement(element, 'Status', name=name,
                                                statusType=statusType,
                                                elementType=elementType,
+                                               tokenOwner=username if token == 'Release' else '',
                                                lastCheckTime=lastCheckTime)
     if not elementInDB['OK']:
       return elementInDB
@@ -251,14 +257,17 @@ class PublisherHandler(RequestHandler):
 
     reason = 'Token %sd by %s ( web )' % (token, username)
 
-    newStatus = rsClient.addOrModifyStatusElement(element, 'Status', name=name,
-                                                  statusType=statusType,
-                                                  elementType=elementType,
-                                                  reason=reason,
-                                                  tokenOwner=tokenOwner,
-                                                  tokenExpiration=tokenExpiration)
-    if not newStatus['OK']:
-      return newStatus
+    allElements = elementInDB['Value']
+    for anElement in allElements:
+      statusType = anElement[1]
+      newStatus = rsClient.addOrModifyStatusElement(element, 'Status', name=name,
+                                                    statusType=statusType,
+                                                    elementType=elementType,
+                                                    reason=reason,
+                                                    tokenOwner=tokenOwner,
+                                                    tokenExpiration=tokenExpiration)
+      if not newStatus['OK']:
+        return newStatus
 
     return S_OK(reason)
 
