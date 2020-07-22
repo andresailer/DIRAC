@@ -399,6 +399,10 @@ class FTS3Job(JSerializable):
       transfers.append(trans)
       fileIDsInTheJob.append(ftsFileID)
 
+    if self.sourceSE == 'KEK-SRM':
+      copy_pin_lifetime = None
+      bring_online = None
+
     if not transfers:
       log.error("No transfer possible!")
       return S_ERROR("No transfer possible")
