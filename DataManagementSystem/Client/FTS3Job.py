@@ -4,6 +4,7 @@ __RCSID__ = "$Id $"
 
 import datetime
 import errno
+from functools import partial
 
 # Requires at least version 3.3.3
 import fts3.rest.client.easy as fts3
@@ -344,11 +345,13 @@ class FTS3Job(JSerializable):
         allStageURLs = res['Value']['Successful']
 
     transfers = []
-
     fileIDsInTheJob = []
+    verify_checksum = True
 
     for ftsFile in self.filesToSubmit:
+      verify_checksum = verify_checksum and ftsFile.checksum != 'test'
 
+    for ftsFile in self.filesToSubmit:
       if ftsFile.lfn in failedLFNs:
         log.debug("Not preparing transfer for file %s" % ftsFile.lfn)
         continue
@@ -422,6 +425,7 @@ class FTS3Job(JSerializable):
                        spacetoken=target_spacetoken,
                        bring_online=bring_online,
                        copy_pin_lifetime=copy_pin_lifetime,
+                       verify_checksum=verify_checksum,
                        retry=3,
                        verify_checksum='target',  # Only check target vs specified, since we verify the source earlier
                        multihop=bool(allStageURLs),  # if we have stage urls, then we need multihop
@@ -531,7 +535,7 @@ class FTS3Job(JSerializable):
       trans_metadata = {'desc': 'Stage %s' % ftsFileID, 'fileID': ftsFileID}
       trans = fts3.new_transfer(sourceSURL,
                                 targetSURL,
-                                checksum='ADLER32:%s' % ftsFile.checksum,
+                                checksum='ADLER32:%s' % ftsFile.checksum if verify_checksum else None,
                                 filesize=ftsFile.size,
                                 metadata=trans_metadata,
                                 activity=self.activity)
