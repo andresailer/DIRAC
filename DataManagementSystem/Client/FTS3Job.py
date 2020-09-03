@@ -385,7 +385,7 @@ class FTS3Job(JSerializable):
         stageTrans_metadata = {'desc': 'PreStage %s' % ftsFileID}
         stageTrans = fts3.new_transfer(stageURL,
                                        stageURL,
-                                       checksum='ADLER32:%s' % ftsFile.checksum,
+                                       checksum=('ADLER32:%s' % ftsFile.checksum) if verify_checksum else None,
                                        filesize=ftsFile.size,
                                        metadata=stageTrans_metadata,
                                        activity=self.activity)
@@ -394,7 +394,7 @@ class FTS3Job(JSerializable):
       trans_metadata = {'desc': 'Transfer %s' % ftsFileID, 'fileID': ftsFileID}
       trans = fts3.new_transfer(sourceSURL,
                                 targetSURL,
-                                checksum='ADLER32:%s' % ftsFile.checksum,
+                                checksum=('ADLER32:%s' % ftsFile.checksum) if verify_checksum else None,
                                 filesize=ftsFile.size,
                                 metadata=trans_metadata,
                                 activity=self.activity)
@@ -425,9 +425,8 @@ class FTS3Job(JSerializable):
                        spacetoken=target_spacetoken,
                        bring_online=bring_online,
                        copy_pin_lifetime=copy_pin_lifetime,
-                       verify_checksum=verify_checksum if verify_checksum else 'none',
                        retry=3,
-                       verify_checksum='target',  # Only check target vs specified, since we verify the source earlier
+                       verify_checksum='target' if verify_checksum else 'none',  # Only check target vs specified, since we verify the source earlier
                        multihop=bool(allStageURLs),  # if we have stage urls, then we need multihop
                        metadata=job_metadata,
                        priority=self.priority)
@@ -535,7 +534,7 @@ class FTS3Job(JSerializable):
       trans_metadata = {'desc': 'Stage %s' % ftsFileID, 'fileID': ftsFileID}
       trans = fts3.new_transfer(sourceSURL,
                                 targetSURL,
-                                checksum='ADLER32:%s' % ftsFile.checksum if verify_checksum else None,
+                                checksum=('ADLER32:%s' % ftsFile.checksum) if verify_checksum else None,
                                 filesize=ftsFile.size,
                                 metadata=trans_metadata,
                                 activity=self.activity)
