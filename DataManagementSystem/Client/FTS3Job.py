@@ -425,7 +425,7 @@ class FTS3Job(JSerializable):
                        spacetoken=target_spacetoken,
                        bring_online=bring_online,
                        copy_pin_lifetime=copy_pin_lifetime,
-                       verify_checksum=verify_checksum,
+                       verify_checksum=verify_checksum if verify_checksum else 'none',
                        retry=3,
                        verify_checksum='target',  # Only check target vs specified, since we verify the source earlier
                        multihop=bool(allStageURLs),  # if we have stage urls, then we need multihop
