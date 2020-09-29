@@ -23,6 +23,7 @@ from DIRAC.Core.Utilities.Grid import getBdiiCEInfo, getBdiiSEInfo, ldapService
 from DIRAC.Core.Utilities.SitesDIRACGOCDBmapping import getDIRACSiteName, getDIRACSesForHostName
 from DIRAC.ConfigurationSystem.Client.Helpers.Path import cfgPath
 from DIRAC.ConfigurationSystem.Client.Helpers.Registry import getVOs, getVOOption
+from DIRAC.ConfigurationSystem.Client.Helpers.Resources import getQueues
 from DIRAC.ConfigurationSystem.Client.PathFinder import getDatabaseSection
 
 
@@ -42,26 +43,18 @@ def getGridVOs():
   return S_OK(voNames)
 
 
-def getCEsFromCS():
+def getCEsFromCS(vo=None):
   """ Get all the CEs defined in the CS
+
+  :param str vo: if vo is given, only return CEs for given vo
   """
+  queues = getQueues(community=vo)
+  if not queues['OK']:
+    return queues
 
   knownCEs = []
-  result = gConfig.getSections('/Resources/Sites')
-  if not result['OK']:
-    return result
-  grids = result['Value']
-
-  for grid in grids:
-    result = gConfig.getSections('/Resources/Sites/%s' % grid)
-    if not result['OK']:
-      return result
-    sites = result['Value']
-
-    for site in sites:
-      opt = gConfig.getOptionsDict('/Resources/Sites/%s/%s' % (grid, site))['Value']
-      ces = List.fromChar(opt.get('CE', ''))
-      knownCEs += ces
+  for _site, ces in queues['Value'].items():
+    knownCEs.extend(ces.keys())
 
   return S_OK(knownCEs)
 
@@ -96,6 +89,7 @@ def getGridCEs(vo, bdiiInfo=None, ceBlackList=None, hostURL=None, glue2=False):
   """ Get all the CEs available for a given VO and having queues in Production state
   """
   knownCEs = set()
+  cesInInformation = set()
   if ceBlackList is not None:
     knownCEs = knownCEs.union(set(ceBlackList))
 
@@ -109,6 +103,7 @@ def getGridCEs(vo, bdiiInfo=None, ceBlackList=None, hostURL=None, glue2=False):
   siteDict = {}
   for site in ceBdiiDict:
     siteCEs = set(ceBdiiDict[site]['CEs'].keys())
+    cesInInformation.update(siteCEs)
     newCEs = siteCEs - knownCEs
     if not newCEs:
       continue
@@ -141,6 +136,20 @@ def getGridCEs(vo, bdiiInfo=None, ceBlackList=None, hostURL=None, glue2=False):
 
   result = S_OK(siteDict)
   result['BdiiInfo'] = ceBdiiDict
+
+  gLogger.notice("CEsinINfo: %s" % cesInInformation)
+  gLogger.notice("Known: %s" % knownCEs)
+  gLogger.notice("no Info %s" % (knownCEs - cesInInformation))
+
+  unknownCEs = knownCEs - cesInInformation
+  gLogger.notice(unknownCEs)
+  if unknownCEs:
+    gLogger.notice("There is currently no information for the following CEs:")
+    for ce in sorted(unknownCEs):
+      gLogger.notice("   ", ce)
+  else:
+    gLogger.notice("We know it all.")
+
   return result
 
 

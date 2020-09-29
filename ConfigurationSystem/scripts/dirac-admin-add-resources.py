@@ -72,7 +72,7 @@ def checkUnusedCEs():
 
   gLogger.notice('looking for new computing resources in the BDII database...')
 
-  result = getCEsFromCS()
+  result = getCEsFromCS(vo=vo)
   if not result['OK']:
     gLogger.error('ERROR: failed to get CEs from CS', result['Message'])
     DIRACExit(-1)
@@ -86,7 +86,7 @@ def checkUnusedCEs():
 
   siteDict = result['Value']
   if siteDict:
-    gLogger.notice('New resources available:\n')
+    gLogger.notice('New resources available:')
     for site in siteDict:
       diracSite = 'Unknown'
       result = getDIRACSiteName(site)
