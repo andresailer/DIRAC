@@ -301,9 +301,12 @@ class CreateArchiveRequest(object):
 
     self.lfnChunks.append(lfnChunk)
     sLog.notice('Created Chunk of %s lfns with %s bytes' % (len(lfnChunk), totalSize))
-
-    self.replicaSEs = set([seItem for se in self.fcClient.getReplicas(self.lfnList)['Value']['Successful'].values()
-                           for seItem in se.keys()])
+    for chunk in self.lfnChunks:
+      self.replicaSEs.update(set(seItem for se in self.fcClient.getReplicas(chunk)
+                                 .get('Value', {})
+                                 .get('Successful', {})
+                                 .values()
+                                 for seItem in se.keys()))
 
   def run(self):
     """Perform checks and create the request."""
