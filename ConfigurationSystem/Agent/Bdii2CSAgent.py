@@ -38,7 +38,7 @@ class Bdii2CSAgent(AgentModule):
     self.addressTo = ''
     self.addressFrom = ''
     self.voName = []
-    self.subject = "Bdii2CSAgent"
+    self.subject = self.am_getModuleParam('fullName')
     self.alternativeBDIIs = []
     self.voBdiiCEDict = {}
     self.voBdiiSEDict = {}
@@ -133,13 +133,16 @@ class Bdii2CSAgent(AgentModule):
     """
 
     bannedCEs = self.am_getOption('BannedCEs', [])
-    result = getCEsFromCS()
-    if not result['OK']:
-      return result
-    knownCEs = set(result['Value'])
-    knownCEs = knownCEs.union(set(bannedCEs))
 
     for vo in self.voName:
+      # get the known CEs for a given VO, so we can know the unknowns, or no longer supported,
+      # for a VO
+      result = getCEsFromCS(vo=vo)
+      if not result['OK']:
+        return result
+      knownCEs = set(result['Value'])
+      knownCEs = knownCEs.union(set(bannedCEs))
+
       result = self.__getBdiiCEInfo(vo)
       if not result['OK']:
         continue
@@ -147,7 +150,10 @@ class Bdii2CSAgent(AgentModule):
       result = getGridCEs(vo, bdiiInfo=bdiiInfo, ceBlackList=knownCEs)
       if not result['OK']:
         self.log.error('Failed to get unused CEs', result['Message'])
+        continue  # next VO
       siteDict = result['Value']
+      unknownCEs = result['UnknownCEs']
+
       body = ''
       for site in siteDict:
         newCEs = set(siteDict[site].keys())  # pylint: disable=no-member
@@ -175,11 +181,19 @@ class Bdii2CSAgent(AgentModule):
         if ceString:
           body += ceString
 
-      if body:
+      if siteDict:
         body = "\nWe are glad to inform You about new CE(s) possibly suitable for %s:\n" % vo + body
         body += "\n\nTo suppress information about CE add its name to BannedCEs list.\n"
         body += "Add new Sites/CEs for vo %s with the command:\n" % vo
         body += "dirac-admin-add-resources --vo %s --ce\n" % vo
+
+      if unknownCEs:
+        body += '\n ================================== \n'
+        body += 'There is no (longer) information about the following CEs for the %s VO.\n' % vo
+        body += '\n'.join(unknownCEs)
+        body += '\n\n'
+
+      if body:
         self.log.info(body)
         if self.addressTo and self.addressFrom:
           notification = NotificationClient()
