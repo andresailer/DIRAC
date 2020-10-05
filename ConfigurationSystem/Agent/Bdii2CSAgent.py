@@ -312,7 +312,8 @@ class Bdii2CSAgent(AgentModule):
       body = '\n'.join(["%s/%s %s -> %s" % entry for entry in changeList])
       if body and self.addressTo and self.addressFrom:
         notification = NotificationClient()
-        result = notification.sendMail(self.addressTo, self.subject, body, self.addressFrom, localAttempt=False)
+        result = notification.sendMail(self.addressTo, self.subject, body, self.addressFrom, localAttempt=False,
+                                       avoidSpam=True)
 
       if body:
         self.log.info('The following configuration changes were detected:')
