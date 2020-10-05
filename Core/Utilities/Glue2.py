@@ -127,7 +127,7 @@ def __getGlue2ShareInfo(host, shareInfoLists):
       queueInfo['GlueCEPolicyMaxCPUTime'] = str(int(shareInfoDict.get('GLUE2ComputingShareMaxCPUTime', 86400)) / 60)
       queueInfo['GlueCEPolicyMaxWallClockTime'] = str(int(shareInfoDict.get('GLUE2ComputingShareMaxWallTime', 86400)) / 60)
       queueInfo['GlueCEInfoTotalCPUs'] = shareInfoDict.get('GLUE2ComputingShareMaxRunningJobs', '10000')
-      queueInfo['GlueCECapability'] = []
+      queueInfo['GlueCECapability'] = ['CPUScalingReferenceSI00=2552']
       executionEnvironment = shareInfoDict['GLUE2ComputingShareExecutionEnvironmentForeignKey']
       if isinstance(executionEnvironment, basestring):
         executionEnvironment = [executionEnvironment]
