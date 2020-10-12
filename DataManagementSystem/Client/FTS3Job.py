@@ -402,7 +402,7 @@ class FTS3Job(JSerializable):
       transfers.append(trans)
       fileIDsInTheJob.append(ftsFileID)
 
-    if self.sourceSE in ['KEK-SRM', 'DESY-SRM']:
+    if self.sourceSE in ['KEK-SRM', 'DESY-SRM', 'KEK-DISK']:
       copy_pin_lifetime = None
       bring_online = None
 
