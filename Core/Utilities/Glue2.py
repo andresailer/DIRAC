@@ -294,8 +294,10 @@ def __getGlue2ExecutionEnvironmentInfoForSite(sitename, foreignKeys, exeInfos):
   architecture = 'x86_64' if architecture == 'UNDEFINEDVALUE' else architecture
   architecture = 'x86_64' if "Intel(R) Xeon(R)" in architecture else architecture
   osFamily = exeInfo.get('GLUE2ExecutionEnvironmentOSFamily', '')  # e.g. linux
-  osName = exeInfo.get('GLUE2ExecutionEnvironmentOSName', '')
-  osVersion = exeInfo.get('GLUE2ExecutionEnvironmentOSVersion', '')
+  osFamily = 'linux' if '#' in osFamily else osFamily
+  osFamily = 'linux' if osFamily == 'UNDEFINEDVALUE' else osFamily
+  osName = exeInfo.get('GLUE2ExecutionEnvironmentOSName', 'centos')
+  osVersion = exeInfo.get('GLUE2ExecutionEnvironmentOSVersion', '7')
   manager = exeInfo.get('GLUE2ExecutionEnvironmentComputingManagerForeignKey', 'manager:unknownBatchSystem')
   # translate to Glue1 like keys, because that is used later on
   infoDict = {'GlueHostMainMemoryRAMSize': maxRam,
