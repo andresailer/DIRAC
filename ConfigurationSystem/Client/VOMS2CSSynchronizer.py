@@ -264,7 +264,7 @@ class VOMS2CSSynchronizer(object):
             newDiracName = self.getUserName(dn)
 
           # Do not consider users with Suspended status in VOMS
-          if self.vomsUserDict[dn]['suspended'] or self.vomsUserDict[dn]['certSuspended']:
+          if self.vomsUserDict[dn].get('suspended') or self.vomsUserDict[dn].get('certSuspended'):
             resultDict["SuspendedUsers"].append(newDiracName)
             continue
 
@@ -311,7 +311,8 @@ class VOMS2CSSynchronizer(object):
 
       # We have an already existing user
       modified = False
-      suspendedInVOMS = self.vomsUserDict[dn]['suspended'] or self.vomsUserDict[dn]['certSuspended']
+      suspendedInVOMS = (self.vomsUserDict[dn].get('suspended') or
+                         self.vomsUserDict[dn].get('certSuspended'))
       suspendedVOList = getUserOption(diracName, 'Suspended', [])
       userDict = {"DN": dn,
                   "CA": self.vomsUserDict[dn]['CA'],
