@@ -1,3 +1,5 @@
+Test
+
 .. -*- mode: rst -*-
 
 .. image:: https://travis-ci.org/DIRACGrid/DIRAC.svg?branch=master
