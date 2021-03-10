@@ -14,6 +14,7 @@ import sys
 import shlex
 import logging
 import subprocess32 as subprocess
+import psutil
 
 
 LOG = logging.getLogger(__name__)
@@ -135,6 +136,11 @@ def makeLogger(name):
 def registerValidatingExitHandler():
   """Registers an exit handler which checks for errors after the build completes"""
   def check():
+
+    # check for running processes
+    for proc in psutil.process_iter(['pid', 'name', 'username']):
+      print(proc.info)
+
     outputDir = "build/html"
     for arg in sys.argv:
       if arg.endswith("/html"):
