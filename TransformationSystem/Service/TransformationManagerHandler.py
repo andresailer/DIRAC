@@ -327,9 +327,12 @@ class TransformationManagerHandler(RequestHandler):
     return database.deleteTransformationMetaQuery(transName, queryType, author=authorDN)
 
   types_getTransformationMetaQuery = [transTypes, basestring]
-
   def export_getTransformationMetaQuery(self, transName, queryType):
     return database.getTransformationMetaQuery(transName, queryType)
+
+  types_getTransformationInputDataQuery = [transTypes]
+  def export_getTransformationInputDataQuery(self, transName):
+    return database.getTransformationInputDataQuery(transName, queryType='Input')
 
   ####################################################################
   #
