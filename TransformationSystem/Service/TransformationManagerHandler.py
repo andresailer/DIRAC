@@ -307,9 +307,13 @@ class TransformationManagerHandler(RequestHandler):
   # These are the methods for TransformationMetaQueries table. It replaces methods
   # for the old TransformationInputDataQuery table
   #
+  types_createTransformationInputDataQuery = [transTypes, dict]
+  def export_createTransformationInputDataQuery(self, transName, queryDict):
+    credDict = self.getRemoteCredentials()
+    authorDN = credDict.get('DN', credDict.get('CN'))
+    return database.createTransformationMetaQuery(transName, queryDict, queryType='Input', author=authorDN)
 
   types_createTransformationMetaQuery = [transTypes, dict, basestring]
-
   def export_createTransformationMetaQuery(self, transName, queryDict, queryType):
     credDict = self.getRemoteCredentials()
     authorDN = credDict.get('DN', credDict.get('CN'))
