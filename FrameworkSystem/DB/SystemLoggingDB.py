@@ -443,7 +443,7 @@ class SystemLoggingDB(DB):
     subSystemIDKey = result['Value']
 
     inFields = ['FixedTextString', 'SubSystemID']
-    inValues = [message.getFixedMessage(), subSystemIDKey]
+    inValues = [message.getFixedMessage()[:255], subSystemIDKey]
     outFields = ['FixedTextID']
     result = self.__insertIntoAuxiliaryTable('FixedTextMessages', outFields, inFields, inValues)
     if not result['OK']:
