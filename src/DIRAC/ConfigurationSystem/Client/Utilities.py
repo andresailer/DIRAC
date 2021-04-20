@@ -18,7 +18,7 @@ from DIRAC.ConfigurationSystem.Client.Helpers.Path import cfgPath
 from DIRAC.ConfigurationSystem.Client.Helpers.Registry import getVOs, getVOOption
 from DIRAC.ConfigurationSystem.Client.Helpers.Resources import getDIRACSiteName
 from DIRAC.ConfigurationSystem.Client.PathFinder import getDatabaseSection
-from DIRAC.Core.Utilities.Grid import getBdiiCEInfo
+from DIRAC.Core.Utilities.Glue2 import getGlue2CEInfo
 from DIRAC.Core.Utilities.SiteSEMapping import getSEHosts
 from DIRAC.Core.Utilities.Decorators import deprecated
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers
@@ -73,15 +73,13 @@ def getSEsFromCS(protocol='srm'):
   return S_OK(knownSEs)
 
 
-def getGridCEs(vo, bdiiInfo=None, ceBlackList=None, hostURL=None, glue2=False):
+def getGridCEs(vo, bdiiInfo=None, ceBlackList=None, hostURL=None):
   """ Get all the CEs available for a given VO and having queues in Production state
 
       :param str vo: VO name
       :param dict bddiInfo: information from BDII
       :param list ceBlackList: CEs from black list
       :param str hostURL: host URL
-      :param bool glue2: use glue2
-
 
       :return: Dictionary with keys: OK, Value, BdiiInfo, UnknownCEs
   """
@@ -92,7 +90,7 @@ def getGridCEs(vo, bdiiInfo=None, ceBlackList=None, hostURL=None, glue2=False):
 
   ceBdiiDict = bdiiInfo
   if bdiiInfo is None:
-    result = getBdiiCEInfo(vo, host=hostURL, glue2=glue2)
+    result = getGlue2CEInfo(vo, host=hostURL)
     if not result['OK']:
       return result
     ceBdiiDict = result['Value']
@@ -139,7 +137,7 @@ def getGridCEs(vo, bdiiInfo=None, ceBlackList=None, hostURL=None, glue2=False):
   return result
 
 
-def getSiteUpdates(vo, bdiiInfo=None, log=None, glue2=True):
+def getSiteUpdates(vo, bdiiInfo=None, log=None):
   """ Get all the necessary updates for the already defined sites and CEs
 
       :param str vo: VO name
@@ -164,7 +162,7 @@ def getSiteUpdates(vo, bdiiInfo=None, log=None, glue2=True):
 
   ceBdiiDict = bdiiInfo
   if bdiiInfo is None:
-    result = getBdiiCEInfo(vo, glue2=glue2)
+    result = getGlue2CEInfo(vo)
     if not result['OK']:
       return result
     ceBdiiDict = result['Value']
