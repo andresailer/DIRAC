@@ -43,7 +43,7 @@ class DIRACScript(object):
             self._func = func
             # Find the name of the command and its documentation
             DIRACScript.localCfg.setUsageMessage(func.__globals__["__doc__"])
-            DIRACScript.scriptName = os.path.basename(func.__globals__["__file__"])[:-3].replace("_", "-")
+            self.scriptName = os.path.basename(func.__globals__["__file__"])[:-3].replace("_", "-")
             return functools.wraps(func)(self)
 
         # Setuptools based installations aren't supported with Python 2
